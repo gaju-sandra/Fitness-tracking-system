@@ -1,4 +1,4 @@
-/* fittrack.css - main stylesheet (light/dark mode, components)
+        /* fittrack.css - main stylesheet (light/dark mode, components)
    Keep selectors general to be used across Razor Pages
 */
 :root{
@@ -204,7 +204,7 @@ html,body{
 .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:8px;border-radius:999px;background:var(--glass);font-weight:700}
 .hero-actions{display:flex;gap:12px;margin-top:18px}
 .hero-stats{display:flex;gap:12px;margin-top:18px}
-.gradient-text{background:linear-gradient(90deg,var(--accent), color-mix(in srgb,var(--accent) 60%, #06b6d4));-webkit-background-clip:text;background-clip:text;color:transparent}
+.gradient-text{background:linear-gradient(90deg,var(--accent), color-mix(in srgb, var(--accent) 60%, #06b6d4));-webkit-background-clip:text;background-clip:text;color:transparent}
 
 @media (max-width:900px){ .hero{grid-template-columns:1fr} }
 
@@ -433,7 +433,7 @@ html,body{
 .footer-news{margin:0 0 10px;color:#c2d2e6;font-size:.86rem;line-height:1.4}
 .footer-cta{display:inline-block;text-decoration:none;background:#ff4b4b;color:#fff;padding:9px 12px;border-radius:8px;font-weight:800;font-size:.85rem}
 .footer-bottom{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,0.08);padding-top:12px;color:#9ab0c8;font-size:.8rem}
-.footer-bottom-links{display:flex;gap:14px;flex-wrap:wrap}
+.footer-bottom-links{display:flex;gap=14px;flex-wrap:wrap}
 .footer-bottom-links a{text-decoration:none;color:#9ab0c8}
 .footer-bottom-links a:hover{color:#fff}
 
