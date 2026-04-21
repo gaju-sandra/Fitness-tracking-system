@@ -1,0 +1,97 @@
+@page
+@model fit.Pages.Admin.UsersModel
+@{ ViewData["Title"] = "Manage Users"; }
+
+<div class="page-header">
+  <div class="page-header-copy">
+    <h1>👥 Manage Users</h1>
+    <p class="page-subtitle">Create, update, and organize admins, trainers, and users.</p>
+  </div>
+  <button class="btn btn-primary" onclick="openModal('userModal')">+ Add User</button>
+</div>
+
+@if (TempData["Message"] != null)
+{ <div class="alert alert-success">@TempData["Message"]</div> }
+
+@if (!string.IsNullOrWhiteSpace(Model.Message))
+{ <div class="alert">@Model.Message</div> }
+
+<div class="card">
+  <table class="data-table">
+    <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Trainer</th><th>Joined</th><th>Actions</th></tr></thead>
+    <tbody>
+      @foreach (var u in Model.Users)
+      {
+        <tr>
+          <td>@u.Name</td>
+          <td>@u.Email</td>
+          <td><span class="badge-role @u.Role.Name.ToLower()">@u.Role.Name</span></td>
+          <td>@(u.TrainerId.HasValue ? Model.Users.FirstOrDefault(x => x.Id == u.TrainerId)?.Name ?? "-" : "-")</td>
+          <td>@u.CreatedAt.ToString("MMM d, yyyy")</td>
+          <td class="actions">
+            <button class="btn btn-sm btn-outline" onclick='editUser(@System.Text.Json.JsonSerializer.Serialize(new { u.Id, u.Name, u.Email, u.RoleId, u.TrainerId }))'>Edit</button>
+            @if (u.Id != Model.SessionUserId)
+            {
+              <form method="post" asp-page-handler="Delete" style="display:inline" onsubmit="return confirm('Delete @u.Name?')">
+                <input type="hidden" name="id" value="@u.Id"/>
+                <button class="btn btn-sm btn-danger">Delete</button>
+              </form>
+            }
+          </td>
+        </tr>
+      }
+      @if (!Model.Users.Any())
+      {
+        <tr><td colspan="6" class="empty-state"><span class="empty-state-emoji">👥</span>No users available.</td></tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<div class="modal-overlay" id="userModal">
+  <div class="modal">
+    <div class="modal-header"><h3 id="modalTitle">Add User</h3><button type="button" onclick="closeModal('userModal')">✕</button></div>
+    <form method="post" asp-page-handler="Save">
+      <input type="hidden" name="EditUser.Id" id="editId" value="0"/>
+      <div class="form-group"><label>Full Name</label><input type="text" name="EditUser.Name" id="editName" class="form-control" required/></div>
+      <small class="text-muted">Naming rule: Admin → ends with <strong>Admin</strong> (e.g. GajuAdmin), Trainer → includes <strong>Trainer</strong> (e.g. GajuTrainer).</small>
+      <div class="form-group"><label>Email</label><input type="email" name="EditUser.Email" id="editEmail" class="form-control" required/></div>
+      <div class="form-group"><label>Password <small>(leave blank to keep current)</small></label><input type="password" name="NewPassword" class="form-control"/></div>
+      <div class="form-group">
+        <label>Role</label>
+        <select name="EditUser.RoleId" id="editRole" class="form-control">
+          @foreach (var r in Model.Roles) { <option value="@r.Id">@r.Name</option> }
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Assigned Trainer</label>
+        <select name="EditUser.TrainerId" id="editTrainer" class="form-control">
+          <option value="">None</option>
+          @foreach (var t in Model.Users.Where(u => u.Role.Name == "Trainer")) { <option value="@t.Id">@t.Name</option> }
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('userModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+@section Scripts {
+<script>
+function editUser(u) {
+  document.getElementById('editId').value = u.id;
+  document.getElementById('editName').value = u.name;
+  document.getElementById('editEmail').value = u.email;
+  document.getElementById('editRole').value = u.roleId;
+  document.getElementById('editTrainer').value = u.trainerId ?? '';
+  document.getElementById('modalTitle').textContent = 'Edit User';
+  openModal('userModal');
+}
+
+if (@Model.ShowUserModal.ToString().ToLowerInvariant()) {
+  openModal('userModal');
+}
+</script>
+}

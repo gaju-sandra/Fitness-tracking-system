@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | FitTrack Premium</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 40px; height: 40px; background: var(--accent-primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white;">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <span style="font-size: 1.5rem; font-weight: 800; color: white;">FIT<span class="gradient-text">TRACK</span></span>
+                </a>
+            </div>
+
+            <nav class="nav-links">
+                <div class="nav-item"><a href="index.html" class="nav-link"><i class="fas fa-house"></i> <span>Home</span></a></div>
+                <div class="nav-item"><a href="dashboard.html" class="nav-link"><i class="fas fa-chart-pie"></i> <span>Dashboard</span></a></div>
+                <div class="nav-item"><a href="nutrition.html" class="nav-link"><i class="fas fa-apple-whole"></i> <span>Nutrition</span></a></div>
+                <div class="nav-item"><a href="workouts.html" class="nav-link"><i class="fas fa-dumbbell"></i> <span>Workouts</span></a></div>
+                <div class="nav-item"><a href="goals.html" class="nav-link"><i class="fas fa-bullseye"></i> <span>Goals</span></a></div>
+                <div class="nav-item"><a href="admin.html" class="nav-link active"><i class="fas fa-user-shield"></i> <span>Admin</span></a></div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+                <div>
+                    <h1 style="font-size: 2rem;">System <span class="gradient-text">Administration</span></h1>
+                    <p style="color: var(--text-muted);">Monitor user activity, manage roles, and export global reports.</p>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn-premium" style="background: var(--success);"><i class="fas fa-file-excel"></i> Export All Data</button>
+                    <button class="btn-premium"><i class="fas fa-user-plus"></i> Create User</button>
+                </div>
+            </header>
+
+            <!-- Admin Stats -->
+            <div class="stats-grid">
+                <div class="glass-card stat-item">
+                    <span class="stat-label">Total Users</span>
+                    <span class="stat-value">1,248</span>
+                    <span style="color: var(--success); font-size: 0.85rem; margin-top: 4px;"><i class="fas fa-arrow-up"></i> 12% this month</span>
+                </div>
+                <div class="glass-card stat-item">
+                    <span class="stat-label">Active Trainers</span>
+                    <span class="stat-value">42</span>
+                </div>
+                <div class="glass-card stat-item">
+                    <span class="stat-label">System Health</span>
+                    <span class="stat-value" style="color: var(--success);">99.9%</span>
+                </div>
+                <div class="glass-card stat-item">
+                    <span class="stat-label">Storage Used</span>
+                    <span class="stat-value">2.4 <span style="font-size: 1rem; color: var(--text-muted);">GB</span></span>
+                </div>
+            </div>
+
+            <!-- User Management Table -->
+            <div class="glass-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h3 style="font-size: 1.25rem;">User Management</h3>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" placeholder="Search by name or email..." class="btn-premium" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 8px 16px; min-width: 300px;">
+                        <button class="btn-premium" style="background: transparent; border: 1px solid var(--glass-border);"><i class="fas fa-filter"></i></button>
+                    </div>
+                </div>
+
+                <table class="premium-table">
+                    <thead>
+                        <tr>
+                            <th>User Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Assigned Trainer</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-hover">
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <img src="https://ui-avatars.com/api/?name=Alice+Uwase&background=3b82f6&color=fff" style="width: 32px; height: 32px; border-radius: 50%;" alt="User">
+                                    <span>Alice Uwase</span>
+                                </div>
+                            </td>
+                            <td>alice@fittrack.rw</td>
+                            <td><span class="status-pill status-pill-primary" style="background: rgba(59, 130, 246, 0.1); color: var(--accent-primary);">Client</span></td>
+                            <td style="color: var(--text-muted);">Jean Trainer</td>
+                            <td><span class="status-pill status-success">Active</span></td>
+                            <td>
+                                <div style="display: flex; gap: 8px;">
+                                    <button style="background: transparent; border: none; color: var(--accent-primary); cursor: pointer;"><i class="fas fa-edit"></i></button>
+                                    <button style="background: transparent; border: none; color: var(--danger); cursor: pointer;"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="row-hover">
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <img src="https://ui-avatars.com/api/?name=Bob+Mugisha&background=8b5cf6&color=fff" style="width: 32px; height: 32px; border-radius: 50%;" alt="User">
+                                    <span>Bob Mugisha</span>
+                                </div>
+                            </td>
+                            <td>bob@fittrack.rw</td>
+                            <td><span class="status-pill status-pill-primary" style="background: rgba(59, 130, 246, 0.1); color: var(--accent-primary);">Client</span></td>
+                            <td style="color: var(--text-muted);">Jean Trainer</td>
+                            <td><span class="status-pill status-success">Active</span></td>
+                            <td>
+                                <div style="display: flex; gap: 8px;">
+                                    <button style="background: transparent; border: none; color: var(--accent-primary); cursor: pointer;"><i class="fas fa-edit"></i></button>
+                                    <button style="background: transparent; border: none; color: var(--danger); cursor: pointer;"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="row-hover">
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <img src="https://ui-avatars.com/api/?name=Jean+Trainer&background=10b981&color=fff" style="width: 32px; height: 32px; border-radius: 50%;" alt="User">
+                                    <span>Jean Trainer</span>
+                                </div>
+                            </td>
+                            <td>trainer@fittrack.rw</td>
+                            <td><span class="status-pill status-pill-primary" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">Trainer</span></td>
+                            <td style="color: var(--text-muted);">System</td>
+                            <td><span class="status-pill status-success">Active</span></td>
+                            <td>
+                                <div style="display: flex; gap: 8px;">
+                                    <button style="background: transparent; border: none; color: var(--accent-primary); cursor: pointer;"><i class="fas fa-edit"></i></button>
+                                    <button style="background: transparent; border: none; color: var(--danger); cursor: pointer;"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

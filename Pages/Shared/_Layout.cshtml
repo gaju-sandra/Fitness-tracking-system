@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>@ViewData["Title"] – FitTrack</title>
+<link rel="icon" type="image/png" href="/favicon.png?v=3"/>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3"/>
+<link rel="shortcut icon" href="/favicon.png?v=3"/>
+<link rel="stylesheet" href="~/css/fittrack.css" asp-append-version="true"/>
+@await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="app-shell">
+@{
+    var role = Context.Session.GetString("UserRole");
+    var userName = Context.Session.GetString("UserName");
+    var isLoggedIn = Context.Session.GetInt32("UserId").HasValue;
+}
+<nav class="navbar">
+  <div class="nav-inner">
+  <div class="nav-brand">
+    <img src="/favicon.png?v=3" alt="FitTrack" class="brand-icon"/>
+    <a href="/" class="brand-link">FitTrack</a>
+  </div>
+  <button class="nav-toggle" onclick="toggleNav()">☰</button>
+  <div class="nav-links" id="navLinks">
+    @if (isLoggedIn)
+    {
+      <a href="/Dashboard/Index">Dashboard</a>
+      @if (role == "Admin")
+      {
+        <a href="/Admin/Users">Users</a>
+        <a href="/Admin/Foods">Foods</a>
+        <a href="/Admin/WorkoutPlans">Plans</a>
+        <a href="/Admin/Reports">Reports</a>
+      }
+      @if (role == "Trainer")
+      {
+        <a href="/Trainer/Clients">Clients</a>
+        <a href="/Trainer/WorkoutPlans">Plans</a>
+      }
+      @if (role == "User")
+      {
+        <a href="/User/BodyWeight">Weight</a>
+        <a href="/User/Nutrition">Nutrition</a>
+        <a href="/User/Workouts">Workouts</a>
+        <a href="/User/Goals">Goals</a>
+        <a href="/User/Mood">Mood</a>
+      }
+      <div class="nav-user">
+        <span class="badge-role">@role</span>
+        <span>@userName</span>
+        <a href="/Auth/Logout" class="btn-logout">Sign Out</a>
+      </div>
+    }
+    else
+    {
+      <a href="/">Home</a>
+      <a href="/Auth/Login" class="btn-nav">Login</a>
+      <a href="/Auth/Register" class="btn-nav btn-primary">Register</a>
+    }
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle light and dark mode">
+      <span data-theme-toggle-icon>🌙</span>
+    </button>
+  </div>
+  </div>
+</nav>
+
+<div id="toast-container"></div>
+
+<main class="main-content">
+  @RenderBody()
+</main>
+
+@await Html.PartialAsync("_Footer")
+
+<script src="~/js/fittrack.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

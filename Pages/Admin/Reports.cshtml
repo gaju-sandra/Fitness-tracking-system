@@ -1,0 +1,50 @@
+@page
+@model fit.Pages.Admin.ReportsModel
+@{ ViewData["Title"] = "Reports"; }
+
+<div class="page-header">
+  <h1>📊 System Reports</h1>
+  <div class="export-btns">
+    <button class="btn btn-outline" onclick="exportTableToCSV('report-data', 'fittrack-report.csv')">📥 Export CSV</button>
+    <button class="btn btn-outline" onclick="window.print()">🖨️ Print / PDF</button>
+  </div>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card blue"><div class="stat-icon">👥</div><div class="stat-info"><span class="stat-value">@Model.TotalUsers</span><span class="stat-label">Total Users</span></div></div>
+  <div class="stat-card green"><div class="stat-icon">🏋️</div><div class="stat-info"><span class="stat-value">@Model.TotalWorkouts</span><span class="stat-label">Workout Sessions</span></div></div>
+  <div class="stat-card orange"><div class="stat-icon">🥗</div><div class="stat-info"><span class="stat-value">@Model.TotalNutritionLogs</span><span class="stat-label">Nutrition Logs</span></div></div>
+  <div class="stat-card purple"><div class="stat-icon">🔥</div><div class="stat-info"><span class="stat-value">@Model.AvgCaloriesPerDay.ToString("F0")</span><span class="stat-label">Avg kcal/day</span></div></div>
+</div>
+
+<div class="dashboard-grid">
+  <div class="dash-card">
+    <h3>Users by Role</h3>
+    <canvas id="roleChart" height="250"></canvas>
+  </div>
+  <div class="dash-card">
+    <h3>Workouts per Month</h3>
+    <canvas id="workoutChart" height="250"></canvas>
+  </div>
+</div>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const roleLabels = @Html.Raw(Model.UsersByRoleLabels);
+const roleData = @Html.Raw(Model.UsersByRoleData);
+new Chart(document.getElementById('roleChart'), {
+  type: 'doughnut',
+  data: { labels: roleLabels, datasets: [{ data: roleData, backgroundColor: ['#6c63ff','#00d4aa','#ff6b6b'] }] },
+  options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+});
+
+const wLabels = @Html.Raw(Model.WorkoutsByMonthLabels);
+const wData = @Html.Raw(Model.WorkoutsByMonthData);
+new Chart(document.getElementById('workoutChart'), {
+  type: 'bar',
+  data: { labels: wLabels, datasets: [{ label: 'Workouts', data: wData, backgroundColor: '#6c63ff' }] },
+  options: { responsive: true, plugins: { legend: { display: false } } }
+});
+</script>
+}

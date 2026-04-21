@@ -1,0 +1,125 @@
+@page
+@model fit.Pages.User.NutritionModel
+@{ ViewData["Title"] = "Nutrition"; }
+
+<div class="page-header">
+  <h1>🥗 Nutrition Tracker</h1>
+  <button class="btn btn-primary" onclick="openModal('nutModal')">+ Log Food</button>
+</div>
+
+@if (TempData["Message"] != null) { <div class="alert alert-success">@TempData["Message"]</div> }
+
+<div class="filter-bar">
+  <form method="get" class="filter-form">
+    <label>Date:</label>
+    <input type="date" name="date" value="@Model.DateFilter" class="form-control"/>
+    <button type="submit" class="btn btn-outline">View</button>
+  </form>
+</div>
+
+<div class="dashboard-grid">
+  <div class="dash-card">
+    <h3>Macros for @Model.DateFilter</h3>
+    <canvas id="macroChart" height="220"></canvas>
+  </div>
+  <div class="dash-card">
+    <h3>Daily Summary</h3>
+    <div class="summary-stats">
+      <div class="sum-item"><span class="sum-icon">🔥</span><strong>@Model.TotalCalories.ToString("F0")</strong><small>kcal</small></div>
+      <div class="sum-item"><span class="sum-icon">💪</span><strong>@Model.TotalProtein.ToString("F1")g</strong><small>Protein</small></div>
+    </div>
+    <div class="calorie-bar-wrap">
+      <div class="calorie-label">Goal: 2000 kcal</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:@(Math.Min(100, Model.TotalCalories / 20))%"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <table class="data-table">
+    <thead><tr><th>Meal</th><th>Food</th><th>Grams</th><th>Calories</th><th>Protein</th><th>Actions</th></tr></thead>
+    <tbody>
+      @foreach (var n in Model.Logs)
+      {
+        <tr>
+          <td><span class="meal-badge @n.MealType.ToLower()">@n.MealType</span></td>
+          <td>@n.Food.Name @(n.Food.IsLocal ? "🇷🇼" : "")</td>
+          <td>@n.Grams g</td>
+          <td>@((n.Food.CaloriesPer100g * n.Grams / 100).ToString("F0")) kcal</td>
+          <td>@((n.Food.ProteinPer100g * n.Grams / 100).ToString("F1")) g</td>
+          <td class="actions">
+            <button class="btn btn-sm btn-outline" onclick='editNut(@System.Text.Json.JsonSerializer.Serialize(new { n.Id, n.FoodId, n.Grams, Date = n.Date.ToString("yyyy-MM-dd"), n.MealType }))'>Edit</button>
+            <form method="post" asp-page-handler="Delete" style="display:inline" onsubmit="return confirm('Delete?')">
+              <input type="hidden" name="id" value="@n.Id"/>
+              <button class="btn btn-sm btn-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+      }
+      @if (!Model.Logs.Any()) { <tr><td colspan="6" class="text-center text-muted">No food logged for this day.</td></tr> }
+    </tbody>
+  </table>
+</div>
+
+<div class="modal-overlay" id="nutModal">
+  <div class="modal">
+    <div class="modal-header"><h3 id="nutModalTitle">Log Food</h3><button type="button" onclick="closeModal('nutModal')">✕</button></div>
+    <form method="post" asp-page-handler="Save">
+      <input type="hidden" name="Entry.Id" id="nId" value="0"/>
+      <div class="form-group">
+        <label>Food</label>
+        <select name="Entry.FoodId" id="nFood" class="form-control" required>
+          <option value="">Select food...</option>
+          @foreach (var f in Model.Foods)
+          { <option value="@f.Id" data-cal="@f.CaloriesPer100g">@f.Name @(f.IsLocal ? "🇷🇼" : "") (@f.CaloriesPer100g kcal/100g)</option> }
+        </select>
+      </div>
+      <div class="form-group"><label>Grams</label><input type="number" step="1" name="Entry.Grams" id="nGrams" class="form-control" required oninput="calcPreview()"/></div>
+      <div id="calPreview" class="cal-preview"></div>
+      <div class="form-group">
+        <label>Meal Type</label>
+        <select name="Entry.MealType" id="nMeal" class="form-control">
+          <option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Date</label><input type="date" name="Entry.Date" id="nDate" class="form-control" required/></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('nutModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const macroLabels = @Html.Raw(Model.MacroLabels);
+const macroData = @Html.Raw(Model.MacroData);
+if (macroData.some(v => v > 0)) {
+  new Chart(document.getElementById('macroChart'), {
+    type: 'doughnut',
+    data: { labels: macroLabels, datasets: [{ data: macroData, backgroundColor: ['#6c63ff','#00d4aa','#ff6b6b'] }] },
+    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+  });
+}
+document.getElementById('nDate').value = '@Model.DateFilter';
+function calcPreview() {
+  const sel = document.getElementById('nFood');
+  const cal = parseFloat(sel.selectedOptions[0]?.dataset.cal || 0);
+  const g = parseFloat(document.getElementById('nGrams').value || 0);
+  const preview = document.getElementById('calPreview');
+  if (cal && g) preview.textContent = `≈ ${(cal * g / 100).toFixed(0)} kcal`;
+  else preview.textContent = '';
+}
+function editNut(n) {
+  document.getElementById('nId').value = n.id;
+  document.getElementById('nFood').value = n.foodId;
+  document.getElementById('nGrams').value = n.grams;
+  document.getElementById('nDate').value = n.date;
+  document.getElementById('nMeal').value = n.mealType;
+  document.getElementById('nutModalTitle').textContent = 'Edit Food Entry';
+  openModal('nutModal');
+}
+</script>
+}

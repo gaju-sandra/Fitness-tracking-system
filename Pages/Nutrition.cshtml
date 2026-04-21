@@ -1,0 +1,279 @@
+@page
+@{
+    ViewData["Title"] = "Nutrition Tracker";
+}
+
+<div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div>
+            <h1 style="margin: 0 0 4px 0; font-size: 1.6rem;">🍎 Nutrition Tracker</h1>
+            <p style="margin: 0; color: var(--muted);">Log meals and track your daily nutrition</p>
+        </div>
+        <button class="btn btn-primary" onclick="openModal('addMealModal')">+ Add Meal</button>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="summary-stats">
+        <div class="stat-card" style="flex: 1;">
+            <div class="stat-icon">🔥</div>
+            <div>
+                <div class="stat-label">Calories Today</div>
+                <div class="stat-value">1,850 kcal</div>
+                <div class="muted-small">Target: 1,500 | +350 kcal</div>
+            </div>
+        </div>
+        <div class="stat-card" style="flex: 1;">
+            <div class="stat-icon">🥚</div>
+            <div>
+                <div class="stat-label">Protein</div>
+                <div class="stat-value">58g</div>
+                <div class="muted-small">Target: 120g | 48% complete</div>
+            </div>
+        </div>
+        <div class="stat-card" style="flex: 1;">
+            <div class="stat-icon">🌾</div>
+            <div>
+                <div class="stat-label">Carbs</div>
+                <div class="stat-value">258g</div>
+                <div class="muted-small">Target: 180g | 143% complete</div>
+            </div>
+        </div>
+        <div class="stat-card" style="flex: 1;">
+            <div class="stat-icon">🧈</div>
+            <div>
+                <div class="stat-label">Fat</div>
+                <div class="stat-value">42g</div>
+                <div class="muted-small">Target: 50g | 84% complete</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter & Export -->
+    <div class="filter-bar">
+        <input type="text" class="input" placeholder="Search meals..." data-table-filter="#mealsTable" style="flex: 1;">
+        <button class="btn btn-ghost" data-csv-export data-target="#mealsTable">📊 Export</button>
+    </div>
+
+    <!-- Meals by Category -->
+    <div class="dashboard-grid" style="margin-top: 18px;">
+        <!-- Breakfast -->
+        <div class="col-6">
+            <div class="dash-card">
+                <h3 style="margin: 0 0 12px 0;">🌅 Breakfast</h3>
+                <div class="card-list">
+                    <div class="nutrition-item">
+                        <div>
+                            <div style="font-weight: 700;">Banana (Igitoki)</div>
+                            <div class="muted-small">150g | 133.5 kcal | 1.65g protein</div>
+                        </div>
+                        <button class="btn-ghost" style="padding: 4px 8px; font-size: 0.9rem;">Delete</button>
+                    </div>
+                    <div class="nutrition-item">
+                        <div>
+                            <div style="font-weight: 700;">Milk (Amata)</div>
+                            <div class="muted-small">100ml | 61 kcal | 3.2g protein</div>
+                        </div>
+                        <button class="btn-ghost" style="padding: 4px 8px; font-size: 0.9rem;">Delete</button>
+                    </div>
+                </div>
+                <div style="padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.03); margin-top: 8px; font-weight: 700; text-align: right;">
+                    Subtotal: 194.5 kcal
+                </div>
+            </div>
+        </div>
+
+        <!-- Lunch -->
+        <div class="col-6">
+            <div class="dash-card">
+                <h3 style="margin: 0 0 12px 0;">🌞 Lunch</h3>
+                <div class="card-list">
+                    <div class="nutrition-item">
+                        <div>
+                            <div style="font-weight: 700;">Beans (Ibishyimbo)</div>
+                            <div class="muted-small">200g | 694 kcal | 44g protein</div>
+                        </div>
+                        <button class="btn-ghost" style="padding: 4px 8px; font-size: 0.9rem;">Delete</button>
+                    </div>
+                </div>
+                <div style="padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.03); margin-top: 8px; font-weight: 700; text-align: right;">
+                    Subtotal: 694 kcal
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dinner & Snacks -->
+    <div class="dashboard-grid" style="margin-top: 18px;">
+        <div class="col-6">
+            <div class="dash-card">
+                <h3 style="margin: 0 0 12px 0;">🌙 Dinner</h3>
+                <div class="card-list">
+                    <div class="nutrition-item">
+                        <div>
+                            <div style="font-weight: 700;">Chicken Breast</div>
+                            <div class="muted-small">150g | 247.5 kcal | 46.5g protein</div>
+                        </div>
+                        <button class="btn-ghost" style="padding: 4px 8px; font-size: 0.9rem;">Delete</button>
+                    </div>
+                </div>
+                <div style="padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.03); margin-top: 8px; font-weight: 700; text-align: right;">
+                    Subtotal: 247.5 kcal
+                </div>
+            </div>
+        </div>
+
+        <!-- Local Foods Info -->
+        <div class="col-6">
+            <div class="dash-card">
+                <h3 style="margin: 0 0 12px 0;">🇷🇼 Popular Local Foods</h3>
+                <div class="card-list" style="font-size: 0.9rem;">
+                    <div class="card-item" style="justify-content: space-between;">
+                        <div>Ugali</div>
+                        <span class="meal-badge">360 kcal/100g</span>
+                    </div>
+                    <div class="card-item" style="justify-content: space-between;">
+                        <div>Isombe (Cassava Leaves)</div>
+                        <span class="meal-badge">45 kcal/100g</span>
+                    </div>
+                    <div class="card-item" style="justify-content: space-between;">
+                        <div>Ibirayi (Potatoes)</div>
+                        <span class="meal-badge">77 kcal/100g</span>
+                    </div>
+                    <div class="card-item" style="justify-content: space-between;">
+                        <div>Ibishyimbo (Beans)</div>
+                        <span class="meal-badge">347 kcal/100g</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- All Meals Table (Hidden from view but for export) -->
+    <table id="mealsTable" class="table" style="display: none;">
+        <thead>
+            <tr>
+                <th>Food</th>
+                <th>Amount</th>
+                <th>Calories</th>
+                <th>Protein</th>
+                <th>Carbs</th>
+                <th>Fat</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Banana (Igitoki)</td>
+                <td>150g</td>
+                <td>133.5 kcal</td>
+                <td>1.65g</td>
+                <td>34.5g</td>
+                <td>0.45g</td>
+                <td>08:00</td>
+            </tr>
+            <tr>
+                <td>Milk (Amata)</td>
+                <td>100ml</td>
+                <td>61 kcal</td>
+                <td>3.2g</td>
+                <td>4.8g</td>
+                <td>3.3g</td>
+                <td>08:15</td>
+            </tr>
+            <tr>
+                <td>Beans (Ibishyimbo)</td>
+                <td>200g</td>
+                <td>694 kcal</td>
+                <td>44g</td>
+                <td>126g</td>
+                <td>2g</td>
+                <td>12:30</td>
+            </tr>
+            <tr>
+                <td>Chicken Breast</td>
+                <td>150g</td>
+                <td>247.5 kcal</td>
+                <td>46.5g</td>
+                <td>0g</td>
+                <td>5.4g</td>
+                <td>19:00</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Quick Actions -->
+    <div style="margin-top: 20px; display: flex; gap: 8px; flex-wrap: wrap;">
+        <a href="/Dashboard" class="action-btn">← Back to Dashboard</a>
+        <a href="/BodyWeights" class="action-btn">⚖️ Weight Log</a>
+        <a href="/Workouts" class="action-btn">💪 Workouts</a>
+    </div>
+</div>
+
+<!-- Add Meal Modal -->
+<div id="addMealModal" style="display: none;">
+    <div class="modal-backdrop" onclick="closeModal('addMealModal')">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Meal</h2>
+                <button class="modal-close" data-action="close-modal" data-target="addMealModal">&times;</button>
+            </div>
+            
+            <div style="padding: 12px 0;">
+                <div class="form-group">
+                    <label class="label">Meal Type</label>
+                    <select class="input" style="padding: 8px 10px;">
+                        <option>🌅 Breakfast</option>
+                        <option>🌞 Lunch</option>
+                        <option>🌙 Dinner</option>
+                        <option>🍿 Snack</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="label">Food Item</label>
+                    <input type="text" class="input" placeholder="Search or enter food name..." />
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
+                        <label class="label">Amount (grams)</label>
+                        <input type="number" class="input" placeholder="100" value="100" />
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label class="label">Unit</label>
+                        <select class="input">
+                            <option>g</option>
+                            <option>ml</option>
+                            <option>serving</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="label">Time</label>
+                    <input type="time" class="input" />
+                </div>
+
+                <div class="form-group">
+                    <label class="label">Notes (optional)</label>
+                    <textarea class="input" placeholder="Any additional notes..." rows="3" style="resize: vertical;"></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-ghost" data-action="close-modal" data-target="addMealModal">Cancel</button>
+                <button class="btn btn-primary" onclick="ft.toast('Meal logged successfully!', 'success'); closeModal('addMealModal');">Save Meal</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .summary-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-top: 18px;
+    }
+</style>

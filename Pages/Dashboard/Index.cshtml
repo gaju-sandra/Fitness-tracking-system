@@ -1,0 +1,318 @@
+@page
+@model fit.Pages.Dashboard.IndexModel
+@{ ViewData["Title"] = "Dashboard"; }
+
+@if (Model.IsAdmin)
+{
+<div class="dashboard-header">
+  <div class="page-header-copy">
+    <h1>🛡️ Admin Dashboard</h1>
+    <p class="page-subtitle">System overview and management</p>
+  </div>
+</div>
+<section class="dashboard-hero admin">
+  <div class="dashboard-hero-copy">
+    <h2>Performance Snapshot</h2>
+    <p>Track platform activity, user growth, and program engagement at a glance.</p>
+  </div>
+  <div class="dashboard-hero-media">
+    <img src="/images/dashboard/admin-fitness-hero.svg" alt="Admin fitness analytics illustration" class="dashboard-hero-image"/>
+  </div>
+</section>
+<div class="stats-grid admin-stats-grid">
+  <div class="stat-card interactive-stat blue"><div class="stat-icon">👥</div><div class="stat-info"><span class="stat-value">@Model.TotalUsers</span><span class="stat-label">Total Users</span></div></div>
+  <div class="stat-card interactive-stat green"><div class="stat-icon">🏋️</div><div class="stat-info"><span class="stat-value">@Model.TotalWorkoutLogs</span><span class="stat-label">Workout Logs</span></div></div>
+  <div class="stat-card interactive-stat orange"><div class="stat-icon">🥗</div><div class="stat-info"><span class="stat-value">@Model.TotalFoods</span><span class="stat-label">Foods in DB</span></div></div>
+  <div class="stat-card interactive-stat purple"><div class="stat-icon">📊</div><div class="stat-info"><span class="stat-value">3</span><span class="stat-label">Roles</span></div></div>
+</div>
+<div class="dashboard-grid admin-dashboard-grid">
+  <div class="dash-card admin-panel users-panel">
+    <h3>Recent Users</h3>
+    <table class="data-table">
+      <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr></thead>
+      <tbody>
+        @foreach (var u in Model.Clients)
+        {
+          <tr><td>@u.Name</td><td>@u.Email</td><td><span class="badge-role @u.Role.Name.ToLower()">@u.Role.Name</span></td><td>@u.CreatedAt.ToString("MMM d, yyyy")</td></tr>
+        }
+        @if (!Model.Clients.Any())
+        {
+          <tr><td colspan="4" class="empty-state">No users yet.</td></tr>
+        }
+      </tbody>
+    </table>
+    <a href="/Admin/Users" class="btn btn-sm btn-outline mt-2">Manage All Users →</a>
+  </div>
+  <div class="dash-card admin-panel actions-panel">
+    <h3>Quick Actions</h3>
+    <div class="quick-actions">
+      <a href="/Admin/Users" class="action-btn">👥 Manage Users</a>
+      <a href="/Admin/Foods" class="action-btn">🥗 Manage Foods</a>
+      <a href="/Admin/WorkoutPlans" class="action-btn">🏋️ Workout Plans</a>
+      <a href="/Admin/Reports" class="action-btn">📊 View Reports</a>
+    </div>
+  </div>
+</div>
+}
+else if (Model.IsTrainer)
+{
+<div class="dashboard-header">
+  <div class="page-header-copy">
+    <h1>🏃 Trainer Dashboard</h1>
+    <p class="page-subtitle">Monitor your clients' progress</p>
+  </div>
+</div>
+<section class="dashboard-hero trainer">
+  <div class="dashboard-hero-copy">
+    <h2>Coach & Guide</h2>
+    <p>Follow client consistency, workout activity, and training momentum in one place.</p>
+  </div>
+  <div class="dashboard-hero-media">
+    <img src="/images/dashboard/trainer-fitness-hero.svg" alt="Trainer coaching illustration" class="dashboard-hero-image"/>
+  </div>
+</section>
+<div class="stats-grid trainer-stats-grid">
+  <div class="stat-card interactive-stat blue"><div class="stat-icon">👥</div><div class="stat-info"><span class="stat-value">@Model.Clients.Count</span><span class="stat-label">My Clients</span></div></div>
+  <div class="stat-card interactive-stat green"><div class="stat-icon">🏋️</div><div class="stat-info"><span class="stat-value">@Model.RecentWorkouts.Count</span><span class="stat-label">Recent Sessions</span></div></div>
+</div>
+<div class="dashboard-grid trainer-dashboard-grid">
+  <div class="dash-card trainer-panel trainer-clients-panel">
+    <h3>My Clients</h3>
+    <div class="client-list">
+      @foreach (var c in Model.Clients)
+      {
+        <div class="client-item">
+          <div class="client-avatar">@c.Name[0]</div>
+          <div class="client-info"><strong>@c.Name</strong><small>@c.Email</small></div>
+        </div>
+      }
+      @if (!Model.Clients.Any())
+      {
+        <div class="empty-state"><span class="empty-state-emoji">🧑‍🤝‍🧑</span>No clients assigned yet.</div>
+      }
+    </div>
+    <a href="/Trainer/Clients" class="btn btn-sm btn-outline mt-2">View All Clients →</a>
+  </div>
+  <div class="dash-card trainer-panel trainer-workouts-panel">
+    <h3>Recent Client Workouts</h3>
+    <table class="data-table">
+      <thead><tr><th>Client</th><th>Plan</th><th>Date</th><th>Duration</th></tr></thead>
+      <tbody>
+        @foreach (var w in Model.RecentWorkouts)
+        {
+          <tr><td>@w.User.Name</td><td>@w.WorkoutPlan.Name</td><td>@w.Date.ToString("MMM d")</td><td>@w.DurationMinutes min</td></tr>
+        }
+        @if (!Model.RecentWorkouts.Any())
+        {
+          <tr><td colspan="4" class="empty-state">No workout logs yet.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+}
+else
+{
+<div class="dashboard-header">
+  <div class="page-header-copy">
+    <h1>👋 Welcome back, @Model.SessionUserName!</h1>
+    <p class="page-subtitle">Here's your fitness summary for today</p>
+  </div>
+</div>
+<section class="dashboard-hero user">
+  <div class="dashboard-hero-copy">
+    <h2>Your Happy Fitness Journey</h2>
+    <p>This guide shows your daily progress in one place: log workouts, track meals, monitor mood, and follow your goals so you can improve consistently.</p>
+  </div>
+  <div class="dashboard-hero-media">
+    <img src="/images/dashboard/user-happy-fitness.svg" alt="Happy fitness person showing daily workout and health progress" class="dashboard-hero-image"/>
+  </div>
+</section>
+
+<section class="dashboard-how-it-works">
+  <h3>How this works for you</h3>
+  <div class="dashboard-how-grid">
+    <div class="how-item">
+      <strong>1) Log your activity</strong>
+      <p>Add workouts, body weight, mood, and meals every day. The dashboard updates your cards immediately.</p>
+    </div>
+    <div class="how-item">
+      <strong>2) Track your trends</strong>
+      <p>Your weight chart and summary cards show patterns so you can see what is improving and what needs attention.</p>
+    </div>
+    <div class="how-item">
+      <strong>3) Follow your goals</strong>
+      <p>Goal progress bars compare your current value with your target and deadline to keep your plan focused.</p>
+    </div>
+    <div class="how-item">
+      <strong>4) Build consistency</strong>
+      <p>Streaks, badges, and daily insights encourage you to stay consistent and keep moving forward.</p>
+    </div>
+  </div>
+</section>
+
+@if (!string.IsNullOrEmpty(Model.AiInsight))
+{
+  <div class="ai-insight"><span class="ai-icon">🤖</span><p>@Model.AiInsight</p></div>
+}
+
+<div class="stats-grid">
+  <div class="stat-card blue">
+    <div class="stat-icon">⚖️</div>
+    <div class="stat-info">
+      <span class="stat-value">@(Model.WeightHistory.LastOrDefault()?.Weight.ToString("F1") ?? "--") kg</span>
+      <span class="stat-label">Current Weight</span>
+    </div>
+  </div>
+  <div class="stat-card green">
+    <div class="stat-icon">🔥</div>
+    <div class="stat-info">
+      <span class="stat-value">@Model.TodayCalories.ToString("F0") kcal</span>
+      <span class="stat-label">Today's Intake</span>
+    </div>
+  </div>
+  <div class="stat-card orange">
+    <div class="stat-icon">⚡</div>
+    <div class="stat-info">
+      <span class="stat-value">@Model.TodayCaloriesBurned kcal</span>
+      <span class="stat-label">Burned Today</span>
+    </div>
+  </div>
+  <div class="stat-card purple">
+    <div class="stat-icon">🔥</div>
+    <div class="stat-info">
+      <span class="stat-value">@Model.Streak days</span>
+      <span class="stat-label">Workout Streak</span>
+    </div>
+  </div>
+</div>
+
+<div class="dashboard-grid user-dashboard-grid">
+  <div class="dash-card user-panel weight-panel">
+    <h3>Weight Progress</h3>
+    <canvas id="weightChart" height="200"></canvas>
+  </div>
+  <div class="dash-card user-panel mood-panel">
+    <h3>Today's Mood & Energy</h3>
+    @if (Model.LatestMood != null)
+    {
+      <div class="mood-display">
+        <div class="mood-item"><span>Mood</span><div class="mood-bar"><div class="mood-fill" style="width:@(Model.LatestMood.MoodScore * 20)%"></div></div><span>@Model.LatestMood.MoodScore/5</span></div>
+        <div class="mood-item"><span>Energy</span><div class="mood-bar"><div class="energy-fill" style="width:@(Model.LatestMood.EnergyScore * 20)%"></div></div><span>@Model.LatestMood.EnergyScore/5</span></div>
+        @if (Model.LatestMood.Note != null) { <p class="mood-note">"@Model.LatestMood.Note"</p> }
+      </div>
+    }
+    else { <p class="text-muted">No mood logged today. <a href="/User/Mood">Log now →</a></p> }
+    <a href="/User/Mood" class="btn btn-sm btn-outline mt-2">Log Mood →</a>
+  </div>
+  <div class="dash-card user-panel goals-panel">
+    <h3>Active Goals</h3>
+    @foreach (var g in Model.Goals.Where(g => !g.IsCompleted).Take(3))
+    {
+      var pct = g.TargetValue > 0 ? Math.Min(100, (int)(g.CurrentValue / g.TargetValue * 100)) : 0;
+      <div class="goal-item">
+        <div class="goal-header"><span>@g.Title</span><span class="goal-type">@g.Type</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:@pct%"></div></div>
+        <small>@g.CurrentValue / @g.TargetValue · Due @g.Deadline.ToString("MMM d")</small>
+      </div>
+    }
+    @if (!Model.Goals.Any(g => !g.IsCompleted))
+    {
+      <div class="empty-state"><span class="empty-state-emoji">🎯</span>No active goals. Start one today.</div>
+    }
+    <a href="/User/Goals" class="btn btn-sm btn-outline mt-2">Manage Goals →</a>
+  </div>
+  <div class="dash-card user-panel workouts-panel">
+    <h3>Recent Workouts</h3>
+    @foreach (var w in Model.RecentWorkouts)
+    {
+      <div class="workout-item">
+        <div class="workout-icon">🏋️</div>
+        <div class="workout-info"><strong>@w.WorkoutPlan.Name</strong><small>@w.Date.ToString("MMM d") · @w.DurationMinutes min · @w.CaloriesBurned kcal</small></div>
+      </div>
+    }
+    @if (!Model.RecentWorkouts.Any())
+    {
+      <div class="empty-state"><span class="empty-state-emoji">🏋️</span>No workouts logged yet.</div>
+    }
+    <a href="/User/Workouts" class="btn btn-sm btn-outline mt-2">Log Workout →</a>
+  </div>
+  <div class="dash-card user-panel nutrition-panel">
+    <h3>Today's Nutrition</h3>
+    @foreach (var n in Model.TodayNutrition)
+    {
+      <div class="nutrition-item">
+        <span class="meal-badge">@n.MealType</span>
+        <span>@n.Food.Name</span>
+        <span class="kcal">@((n.Food.CaloriesPer100g * n.Grams / 100).ToString("F0")) kcal</span>
+      </div>
+    }
+    @if (!Model.TodayNutrition.Any())
+    {
+      <div class="empty-state"><span class="empty-state-emoji">🥗</span>No meals logged today.</div>
+    }
+    <a href="/User/Nutrition" class="btn btn-sm btn-outline mt-2">Log Food →</a>
+  </div>
+  <div class="dash-card user-panel badges-panel">
+    <h3>My Badges 🏅</h3>
+    <div class="badges-grid">
+      @foreach (var b in Model.Badges)
+      {
+        <div class="badge-item" title="@b.Description · @b.EarnedAt.ToString("MMM d")">
+          <span class="badge-icon">@b.Icon</span>
+          <small>@b.Name</small>
+        </div>
+      }
+      @if (!Model.Badges.Any()) { <p class="text-muted">Complete workouts to earn badges!</p> }
+    </div>
+  </div>
+</div>
+
+<div class="fitness-avatar-section user-avatar-strip">
+  <h3>Your Fitness Avatar</h3>
+  <div class="avatar-container">
+    <div class="avatar-figure">
+      @{
+        var lastWeight = Model.WeightHistory.LastOrDefault()?.Weight ?? 70;
+        var avatarSize = lastWeight < 60 ? "slim" : lastWeight < 80 ? "normal" : "heavy";
+      }
+      <div class="avatar-body-display @avatarSize">🧍</div>
+      <div class="avatar-stats-ring">
+        <div class="avatar-stat-pill">💪 @lastWeight.ToString("F1")kg</div>
+        <div class="avatar-stat-pill">🔥 @Model.Streak day streak</div>
+        <div class="avatar-stat-pill">🏅 @Model.Badges.Count badges</div>
+      </div>
+    </div>
+  </div>
+</div>
+}
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const labels = @Html.Raw(Model.WeightChartLabels);
+const data = @Html.Raw(Model.WeightChartData);
+if (document.getElementById('weightChart') && data.length > 0) {
+  new Chart(document.getElementById('weightChart'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Weight (kg)',
+        data,
+        borderColor: '#6c63ff',
+        backgroundColor: 'rgba(108,99,255,0.1)',
+        tension: 0.4,
+        fill: true,
+        pointBackgroundColor: '#6c63ff'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: false } }
+    }
+  });
+}
+</script>
+}

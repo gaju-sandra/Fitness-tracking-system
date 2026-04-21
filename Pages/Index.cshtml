@@ -1,0 +1,281 @@
+@page
+@model fit.Pages.IndexModel
+@{ ViewData["Title"] = "FitTrack - Your Personal Fitness Companion"; }
+
+@section Styles {
+  <link rel="stylesheet" href="~/css/landing.css" asp-append-version="true" />
+}
+
+<section class="hero-modern">
+  <div class="hero-container">
+    <!-- Left Content -->
+    <div class="hero-left">
+      <div class="hero-logo">FITTRACK</div>
+      <h1 class="hero-title">
+        BUILD<br/>
+        YOUR<br/>
+        <span class="hero-highlight">BODY</span><br/>
+        WITH US
+      </h1>
+      <p class="hero-description">
+        Track workouts, log nutrition, monitor mood, and achieve goals—all in one beautiful, intuitive platform. Designed for fitness enthusiasts in Rwanda and beyond.
+      </p>
+      <div class="hero-actions">
+        <a href="/Auth/Register" class="btn-primary">JOIN NOW</a>
+        <a href="/Auth/Login" class="btn-secondary">LOGIN</a>
+      </div>
+      <div class="hero-social">
+        <a href="#" class="social-icon">𝕏</a>
+        <a href="#" class="social-icon">WhatsApp</a>
+        <a href="#" class="social-icon">f</a>
+        <a href="#" class="social-icon">📷</a>
+      </div>
+    </div>
+
+    <!-- Right Image -->
+    <div class="hero-right">
+      <div class="hero-image-container">
+        <img src="https://images.unsplash.com/photo-1549060279-7e168fcee0c2?auto=format&fit=crop&w=1400&q=80" alt="Group cycling workout" class="hero-image">
+        <div class="hero-image-overlay"></div>
+      </div>
+    </div>
+
+    <!-- Decorative Elements -->
+    <div class="decorator-line decorator-line-top"></div>
+    <div class="decorator-line decorator-line-right"></div>
+    <div class="decorator-dots decorator-dots-left"></div>
+    <div class="decorator-dots decorator-dots-right"></div>
+  </div>
+</section>
+
+<div class="container">
+
+  <section class="features">
+    <h2 style="text-align: center; margin-bottom: 28px; font-size: 2rem;">Everything You Need</h2>
+    <div class="features-grid">
+      <button type="button" class="feature-card feature-card-btn" data-feature="weight">
+        <div class="feature-icon">⚖️</div>
+        <div>
+          <h3 style="margin: 0 0 6px 0; font-weight: 700;">Weight Tracking</h3>
+          <p style="margin: 0; color: var(--muted); font-size: 0.9rem;">Log your bodyweight daily and visualize progress with interactive charts and trends.</p>
+        </div>
+      </button>
+      <button type="button" class="feature-card feature-card-btn" data-feature="nutrition">
+        <div class="feature-icon">🍎</div>
+        <div>
+          <h3 style="margin: 0 0 6px 0; font-weight: 700;">Nutrition Logging</h3>
+          <p style="margin: 0; color: var(--muted); font-size: 0.9rem;">Track meals with a database of local Rwandan foods like Isombe, Ugali, and Ibishyimbo.</p>
+        </div>
+      </button>
+      <button type="button" class="feature-card feature-card-btn" data-feature="workout">
+        <div class="feature-icon">🏋️</div>
+        <div>
+          <h3 style="margin: 0 0 6px 0; font-weight: 700;">Workout Tracking</h3>
+          <p style="margin: 0; color: var(--muted); font-size: 0.9rem;">Follow trainer-designed plans and log every session with detailed history tracking.</p>
+        </div>
+      </button>
+      <button type="button" class="feature-card feature-card-btn" data-feature="goals">
+        <div class="feature-icon">🎯</div>
+        <div>
+          <h3 style="margin: 0 0 6px 0; font-weight: 700;">Goal Management</h3>
+          <p style="margin: 0; color: var(--muted); font-size: 0.9rem;">Set fitness goals and track progress with visual indicators and deadline tracking.</p>
+        </div>
+      </button>
+      <button type="button" class="feature-card feature-card-btn" data-feature="mood">
+        <div class="feature-icon">😊</div>
+        <div>
+          <h3 style="margin: 0 0 6px 0; font-weight: 700;">Mood Tracking</h3>
+          <p style="margin: 0; color: var(--muted); font-size: 0.9rem;">Monitor mood and energy levels to understand your mental wellness holistically.</p>
+        </div>
+      </button>
+      <button type="button" class="feature-card feature-card-btn" data-feature="gamification">
+        <div class="feature-icon">🏆</div>
+        <div>
+          <h3 style="margin: 0 0 6px 0; font-weight: 700;">Gamification</h3>
+          <p style="margin: 0; color: var(--muted); font-size: 0.9rem;">Earn badges, maintain streaks, and celebrate milestones on your journey.</p>
+        </div>
+      </button>
+    </div>
+
+    <div id="featureDetail" class="feature-detail" aria-live="polite">
+      <div class="feature-detail-header">
+        <h3 id="featureDetailTitle">Click a card to see how it works</h3>
+        <span id="featureDetailTag" class="feature-detail-tag">Feature details</span>
+      </div>
+      <p id="featureDetailText" class="feature-detail-text">Select any card above to view a clear explanation with related pictures.</p>
+      <div id="featureDetailStats" class="feature-detail-stats"></div>
+      <div id="featureDetailGallery" class="feature-detail-gallery"></div>
+    </div>
+  </section>
+
+  <section class="roles-section">
+    <h2 style="text-align: center; margin-bottom: 28px; font-size: 2rem;">Built for Everyone</h2>
+    <div class="roles-grid">
+      <div class="role-card">
+        <div style="font-size: 2.5rem; margin-bottom: 8px;">👤</div>
+        <h3 style="margin: 0 0 6px 0; font-weight: 700;">Fitness Enthusiasts</h3>
+        <p style="margin: 0; font-size: 0.85rem; color: var(--muted);">Track every workout, meal, and milestone on your personal fitness journey.</p>
+      </div>
+      <div class="role-card">
+        <div style="font-size: 2.5rem; margin-bottom: 8px;">👨‍🏫</div>
+        <h3 style="margin: 0 0 6px 0; font-weight: 700;">Trainers</h3>
+        <p style="margin: 0; font-size: 0.85rem; color: var(--muted);">Manage clients, assign workouts, and monitor progress in real-time.</p>
+      </div>
+      <div class="role-card">
+        <div style="font-size: 2.5rem; margin-bottom: 8px;">⚙️</div>
+        <h3 style="margin: 0 0 6px 0; font-weight: 700;">Admins</h3>
+        <p style="margin: 0; font-size: 0.85rem; color: var(--muted);">Manage users, workouts, foods, and system settings with full control.</p>
+      </div>
+      <div class="role-card">
+        <div style="font-size: 2.5rem; margin-bottom: 8px;">🌍</div>
+        <h3 style="margin: 0 0 6px 0; font-weight: 700;">Everyone</h3>
+        <p style="margin: 0; font-size: 0.85rem; color: var(--muted);">Simple, accessible tools to start and maintain a healthier lifestyle.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="trainers-section">
+    <h2 style="text-align: center; margin-bottom: 28px; font-size: 2rem;">Meet Our Top Trainers</h2>
+    <div class="trainer-grid">
+      @if (Model.TopTrainers != null && Model.TopTrainers.Count > 0)
+      {
+        @foreach (var trainer in Model.TopTrainers)
+        {
+          <div class="trainer-card">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=@trainer.Id" alt="@trainer.Name" class="trainer-avatar">
+            <h3 style="margin: 12px 0 6px 0; font-weight: 700;">@trainer.Name</h3>
+            <p style="margin: 0; color: var(--muted); font-size: 0.85rem;">Professional Fitness Trainer</p>
+            <p style="margin: 8px 0 0 0; color: var(--muted); font-size: 0.8rem;">Specializing in strength and endurance training</p>
+            <a href="/Auth/Login" class="btn btn-primary" style="margin-top: 12px; font-size: 0.85rem; padding: 8px 12px;">View Profile</a>
+          </div>
+        }
+      }
+      else
+      {
+        <p style="text-align: center; grid-column: 1 / -1; color: var(--muted);">Loading trainers...</p>
+      }
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <h2 style="font-size: 1.8rem; margin-bottom: 12px;">Ready to Transform Your Fitness?</h2>
+    <p style="color: var(--muted); margin-bottom: 18px;">Join thousands of users tracking their health and achieving their goals with FitTrack.</p>
+    <a href="/Auth/Register" class="btn btn-primary" style="font-size: 0.95rem; padding: 12px 20px;">Start Your Free Account</a>
+  </section>
+</div>
+
+@section Scripts {
+<script>
+const featureData = {
+  weight: {
+    title: 'Weight Tracking',
+    tag: 'Progress + Trends',
+    text: 'Log your daily or weekly weight. FitTrack builds a trend chart so you can quickly see progress, plateaus, and changes over time.',
+    stats: [
+      { label: 'Recommended check-ins', value: '3-7 / week' },
+      { label: 'Trend view', value: 'Daily & monthly' },
+      { label: 'Best practice', value: 'Same time each day' }
+    ],
+    images: [
+      { src: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=700&q=80', alt: 'Person checking weight on a scale', animated: true }
+    ]
+  },
+  nutrition: {
+    title: 'Nutrition Logging',
+    tag: 'Meals + Calories',
+    text: 'Choose a food item, enter grams, and FitTrack calculates calories and macros. This helps you balance local foods and stay close to your daily targets.',
+    stats: [
+      { label: 'Meal types', value: 'Breakfast/Lunch/Dinner/Snack' },
+      { label: 'Auto calculation', value: 'Calories + macros' },
+      { label: 'Food focus', value: 'Local + global options' }
+    ],
+    images: [
+      { src: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=700&q=80', alt: 'Healthy food bowl' }
+    ]
+  },
+  workout: {
+    title: 'Workout Tracking',
+    tag: 'Plans + Sessions',
+    text: 'Pick a workout plan, add duration and calories burned, and track history. You can review sessions and monitor consistency.',
+    stats: [
+      { label: 'Session data', value: 'Duration + calories' },
+      { label: 'History', value: 'Track by date' },
+      { label: 'Plan support', value: 'Trainer-created plans' }
+    ],
+    images: [
+      { src: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=700&q=80', alt: 'Workout training session' }
+    ]
+  },
+  goals: {
+    title: 'Goal Management',
+    tag: 'Targets + Deadlines',
+    text: 'Create measurable goals, update your current value, and follow completion progress. It keeps motivation high and your plan structured.',
+    stats: [
+      { label: 'Goal types', value: 'Weight, workout, custom' },
+      { label: 'Completion', value: 'Progress-based status' },
+      { label: 'Deadlines', value: 'Due-date tracking' }
+    ],
+    images: [
+      { src: 'https://images.unsplash.com/photo-1434626881859-194d67b2b86f?auto=format&fit=crop&w=700&q=80', alt: 'Target and planning concept' }
+    ]
+  },
+  mood: {
+    title: 'Mood Tracking',
+    tag: 'Mind + Energy',
+    text: 'Record mood and energy daily. FitTrack highlights your latest pattern so you can match exercise intensity to how you feel.',
+    stats: [
+      { label: 'Daily check', value: 'Mood + energy score' },
+      { label: 'Insights', value: 'Pattern recommendations' },
+      { label: 'Range', value: '1-5 score scale' }
+    ],
+    images: [
+      { src: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=700&q=80', alt: 'Mindfulness and wellness mood concept' }
+    ]
+  },
+  gamification: {
+    title: 'Gamification',
+    tag: 'Badges + Streaks',
+    text: 'Earn badges when you complete milestones. Keep your streak active and celebrate progress with visible rewards.',
+    stats: [
+      { label: 'Rewards', value: 'Badge milestones' },
+      { label: 'Consistency', value: 'Streak tracking' },
+      { label: 'Motivation', value: 'Visible achievements' }
+    ],
+    images: [
+      { src: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=700&q=80', alt: 'Celebration and achievement concept' }
+    ]
+  }
+};
+
+const featureCards = document.querySelectorAll('.feature-card-btn');
+const detailTitle = document.getElementById('featureDetailTitle');
+const detailTag = document.getElementById('featureDetailTag');
+const detailText = document.getElementById('featureDetailText');
+const detailStats = document.getElementById('featureDetailStats');
+const detailGallery = document.getElementById('featureDetailGallery');
+
+function renderFeatureDetail(key) {
+  const data = featureData[key];
+  if (!data) return;
+
+  featureCards.forEach(c => c.classList.toggle('active', c.dataset.feature === key));
+  detailTitle.textContent = data.title;
+  detailTag.textContent = data.tag;
+  detailText.textContent = data.text;
+  detailStats.innerHTML = (data.stats || [])
+    .map(s => `<div class="feature-stat-item"><strong>${s.value}</strong><span>${s.label}</span></div>`)
+    .join('');
+
+  detailGallery.innerHTML = data.images
+    .map(i => `<figure class="feature-detail-figure ${i.animated ? 'animated' : ''}"><img src="${i.src}" alt="${i.alt}" loading="lazy" /><figcaption>${i.alt}</figcaption></figure>`)
+    .join('');
+}
+
+featureCards.forEach(card => {
+  card.addEventListener('click', () => renderFeatureDetail(card.dataset.feature));
+});
+
+renderFeatureDetail('weight');
+</script>
+}
+

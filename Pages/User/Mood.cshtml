@@ -1,0 +1,122 @@
+@page
+@model fit.Pages.User.MoodModel
+@{ ViewData["Title"] = "Mood & Energy"; }
+
+<div class="page-header">
+  <h1>😊 Mood & Energy Tracker</h1>
+  <button class="btn btn-primary" onclick="openModal('moodModal')">+ Log Today</button>
+</div>
+
+@if (TempData["Message"] != null) { <div class="alert alert-success">@TempData["Message"]</div> }
+
+@if (!string.IsNullOrEmpty(Model.Recommendation))
+{
+  <div class="ai-insight"><span class="ai-icon">💡</span><p>@Model.Recommendation</p></div>
+}
+
+<div class="dash-card mb-3">
+  <h3>Mood & Energy Trends (Last 14 days)</h3>
+  <canvas id="moodChart" height="180"></canvas>
+</div>
+
+<div class="card">
+  <table class="data-table">
+    <thead><tr><th>Date</th><th>Mood</th><th>Energy</th><th>Note</th><th>Actions</th></tr></thead>
+    <tbody>
+      @foreach (var m in Model.Logs)
+      {
+        var moodEmoji = m.MoodScore switch { 1 => "😞", 2 => "😕", 3 => "😐", 4 => "😊", _ => "😄" };
+        var energyEmoji = m.EnergyScore switch { 1 => "🪫", 2 => "😴", 3 => "⚡", 4 => "🔋", _ => "⚡⚡" };
+        <tr>
+          <td>@m.Date.ToString("MMM d, yyyy")</td>
+          <td>@moodEmoji @m.MoodScore/5</td>
+          <td>@energyEmoji @m.EnergyScore/5</td>
+          <td>@(m.Note ?? "-")</td>
+          <td class="actions">
+            <button class="btn btn-sm btn-outline" onclick='editMood(@System.Text.Json.JsonSerializer.Serialize(new { m.Id, m.MoodScore, m.EnergyScore, Date = m.Date.ToString("yyyy-MM-dd"), m.Note }))'>Edit</button>
+            <form method="post" asp-page-handler="Delete" style="display:inline" onsubmit="return confirm('Delete?')">
+              <input type="hidden" name="id" value="@m.Id"/>
+              <button class="btn btn-sm btn-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+      }
+      @if (!Model.Logs.Any()) { <tr><td colspan="5" class="text-center text-muted">No mood logs yet.</td></tr> }
+    </tbody>
+  </table>
+</div>
+
+<div class="modal-overlay" id="moodModal">
+  <div class="modal">
+    <div class="modal-header"><h3 id="moodModalTitle">Log Mood</h3><button type="button" onclick="closeModal('moodModal')">✕</button></div>
+    <form method="post" asp-page-handler="Save">
+      <input type="hidden" name="Entry.Id" id="mId" value="0"/>
+      <div class="form-group">
+        <label>Mood (1=Terrible, 5=Amazing)</label>
+        <div class="emoji-picker" id="moodPicker">
+          @for (int i = 1; i <= 5; i++)
+          {
+            var emoji = i switch { 1 => "😞", 2 => "😕", 3 => "😐", 4 => "😊", _ => "😄" };
+            <button type="button" class="emoji-btn" data-val="@i" data-target="mMood" onclick="pickEmoji(this)">@emoji</button>
+          }
+        </div>
+        <input type="hidden" name="Entry.MoodScore" id="mMood" value="3" required/>
+      </div>
+      <div class="form-group">
+        <label>Energy (1=Exhausted, 5=Energized)</label>
+        <div class="emoji-picker" id="energyPicker">
+          @for (int i = 1; i <= 5; i++)
+          {
+            var emoji = i switch { 1 => "🪫", 2 => "😴", 3 => "⚡", 4 => "🔋", _ => "⚡⚡" };
+            <button type="button" class="emoji-btn" data-val="@i" data-target="mEnergy" onclick="pickEmoji(this)">@emoji</button>
+          }
+        </div>
+        <input type="hidden" name="Entry.EnergyScore" id="mEnergy" value="3" required/>
+      </div>
+      <div class="form-group"><label>Date</label><input type="date" name="Entry.Date" id="mDate" class="form-control" required/></div>
+      <div class="form-group"><label>Note (optional)</label><input type="text" name="Entry.Note" id="mNote" class="form-control"/></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('moodModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const mLabels = @Html.Raw(Model.ChartLabels);
+const moodD = @Html.Raw(Model.MoodData);
+const energyD = @Html.Raw(Model.EnergyData);
+if (mLabels.length > 0) {
+  new Chart(document.getElementById('moodChart'), {
+    type: 'line',
+    data: {
+      labels: mLabels,
+      datasets: [
+        { label: 'Mood', data: moodD, borderColor: '#6c63ff', tension: 0.4, fill: false },
+        { label: 'Energy', data: energyD, borderColor: '#00d4aa', tension: 0.4, fill: false }
+      ]
+    },
+    options: { responsive: true, scales: { y: { min: 1, max: 5 } } }
+  });
+}
+document.getElementById('mDate').value = new Date().toISOString().split('T')[0];
+function pickEmoji(btn) {
+  const target = btn.dataset.target;
+  document.getElementById(target).value = btn.dataset.val;
+  btn.closest('.emoji-picker').querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+function editMood(m) {
+  document.getElementById('mId').value = m.id;
+  document.getElementById('mMood').value = m.moodScore;
+  document.getElementById('mEnergy').value = m.energyScore;
+  document.getElementById('mDate').value = m.date;
+  document.getElementById('mNote').value = m.note ?? '';
+  document.getElementById('moodModalTitle').textContent = 'Edit Mood';
+  openModal('moodModal');
+}
+</script>
+}

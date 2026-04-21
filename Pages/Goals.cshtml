@@ -1,0 +1,189 @@
+@page
+@{
+    ViewData["Title"] = "Goals";
+}
+
+<style>
+    .goals-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+    .goals-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 20px;
+    }
+    .goal-card {
+        background: var(--card);
+        border: 1px solid var(--glass);
+        border-radius: var(--radius);
+        padding: 24px;
+        box-shadow: var(--shadow);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .goal-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    .goal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 16px;
+    }
+    .goal-type {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 700;
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
+    .type-weight {
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--accent);
+    }
+    .type-workout {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+    }
+    .goal-title {
+        font-size: 1.25rem;
+        margin: 8px 0;
+        font-weight: 600;
+        color: var(--text);
+    }
+    .goal-deadline {
+        font-size: 0.9rem;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .progress-section {
+        margin-top: 20px;
+    }
+    .progress-stats {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+        color: var(--muted);
+    }
+    .progress-bar-container {
+        height: 8px;
+        background: var(--glass);
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    .progress-bar {
+        height: 100%;
+        border-radius: 4px;
+        background: var(--accent);
+        transition: width 0.3s ease;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 48px 24px;
+        background: var(--card);
+        border-radius: var(--radius);
+        border: 1px dashed var(--muted);
+        grid-column: 1 / -1;
+    }
+    .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 16px;
+    }
+</style>
+
+<div class="container main-content">
+    <div class="goals-header">
+        <div>
+            <h1 style="margin: 0; font-size: 2rem;">🎯 My Goals</h1>
+            <p style="margin: 4px 0 0 0; color: var(--muted);">Track and celebrate your fitness milestones</p>
+        </div>
+        <button class="btn btn-primary" onclick="alert('Open New Goal Modal')">+ Create Goal</button>
+    </div>
+
+    <!-- Active Goals Section -->
+    <h3 style="margin: 0 0 16px 0; color: var(--text);">In Progress</h3>
+    <div class="goals-grid" style="margin-bottom: 32px;">
+        
+        <!-- Goal Card 1 (Weight) -->
+        <div class="goal-card">
+            <div class="goal-header">
+                <div>
+                    <span class="goal-type type-weight">Weight Loss</span>
+                    <h3 class="goal-title">Reach 75kg By Summer</h3>
+                    <div class="goal-deadline">🗓️ Deadline: Aug 01, 2025</div>
+                </div>
+                <div style="font-size: 1.5rem;" title="On Track">🔥</div>
+            </div>
+            
+            <div class="progress-section">
+                <div class="progress-stats">
+                    <span>Current: 78kg</span>
+                    <span>Target: 75kg</span>
+                </div>
+                <div class="progress-bar-container">
+                    <!-- Progress math: started at say 85kg -> target 75kg. We are 70% there -->
+                    <div class="progress-bar" style="width: 70%;"></div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 16px; text-align: right;">
+                <button class="btn btn-sm btn-outline">Log Progress</button>
+            </div>
+        </div>
+
+        <!-- Goal Card 2 (Workout) -->
+        <div class="goal-card">
+            <div class="goal-header">
+                <div>
+                    <span class="goal-type type-workout">Consistency</span>
+                    <h3 class="goal-title">Run 3x Times a Week</h3>
+                    <div class="goal-deadline">🗓️ Ongoing</div>
+                </div>
+                <div style="font-size: 1.5rem;" title="Needs Work">⚠️</div>
+            </div>
+            
+            <div class="progress-section">
+                <div class="progress-stats">
+                    <span>Current: 1 Run</span>
+                    <span>Target: 3 Runs</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" style="width: 33%; background: var(--success);"></div>
+                </div>
+            </div>
+
+            <div style="margin-top: 16px; text-align: right;">
+                <button class="btn btn-sm btn-outline">Log Workout</button>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Completed Goals Section -->
+    <h3 style="margin: 0 0 16px 0; color: var(--text);">Completed</h3>
+    <div class="goals-grid" style="opacity: 0.7;">
+        <!-- Completed Goal Card -->
+        <div class="goal-card">
+            <div class="goal-header">
+                <div>
+                    <span class="goal-type type-weight">Muscle Gain</span>
+                    <h3 class="goal-title" style="text-decoration: line-through;">Bench Press 100kg</h3>
+                    <div class="goal-deadline" style="color: var(--success);">✅ Completed: Jan 15, 2025</div>
+                </div>
+                <div style="font-size: 1.5rem;">🏅</div>
+            </div>
+            <div class="progress-section">
+                <div class="progress-bar-container">
+                    <div class="progress-bar" style="width: 100%; background: var(--success);"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

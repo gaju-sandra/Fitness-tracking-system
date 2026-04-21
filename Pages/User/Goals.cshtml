@@ -1,0 +1,137 @@
+@page
+@model fit.Pages.User.GoalsModel
+@{ ViewData["Title"] = "Goals"; }
+
+<div class="page-header">
+  <h1>🎯 My Goals</h1>
+  <button class="btn btn-primary" onclick="openModal('goalModal')">+ Add Goal</button>
+</div>
+
+@if (TempData["Message"] != null) { <div class="alert alert-success">@TempData["Message"]</div> }
+
+<div class="goals-list">
+  @foreach (var g in Model.Goals)
+  {
+    var pct = g.TargetValue > 0 ? (int)Math.Min(100, g.CurrentValue / g.TargetValue * 100) : 0;
+    var daysLeft = (g.Deadline - DateTime.UtcNow).Days;
+    <div class="goal-card @(g.IsCompleted ? "completed" : "")">
+      <div class="goal-card-header">
+        <div>
+          <h3>@g.Title @(g.IsCompleted ? "✅" : "")</h3>
+          <span class="goal-type-badge">@g.Type</span>
+        </div>
+        <div class="goal-card-actions">
+          <button class="btn btn-sm btn-outline" onclick='editGoal(@System.Text.Json.JsonSerializer.Serialize(new { g.Id, g.Title, g.Type, g.TargetValue, g.CurrentValue, Deadline = g.Deadline.ToString("yyyy-MM-dd"), g.IsCompleted }))'>Edit</button>
+          <form method="post" asp-page-handler="Delete" style="display:inline" onsubmit="return confirm('Delete goal?')">
+            <input type="hidden" name="id" value="@g.Id"/>
+            <button class="btn btn-sm btn-danger">Delete</button>
+          </form>
+        </div>
+      </div>
+      <div class="goal-progress">
+        <div class="progress-bar"><div class="progress-fill @(pct >= 100 ? "complete" : "")" style="width:@pct%"></div></div>
+        <span class="pct-label">@pct%</span>
+      </div>
+      <div class="goal-meta">
+        <span>Current: <strong>@g.CurrentValue</strong></span>
+        <span>Target: <strong>@g.TargetValue</strong></span>
+        <span>@(daysLeft > 0 ? $"{daysLeft} days left" : daysLeft == 0 ? "Due today!" : "Overdue")</span>
+      </div>
+    </div>
+  }
+  @if (!Model.Goals.Any()) { <div class="empty-state"><p>No goals yet. Set your first fitness goal!</p></div> }
+</div>
+
+<div class="modal-overlay" id="goalModal">
+  <div class="modal">
+    <div class="modal-header"><h3 id="goalModalTitle">Add Goal</h3><button type="button" onclick="closeModal('goalModal')">✕</button></div>
+    <form method="post" asp-page-handler="Save">
+      <input type="hidden" name="Entry.Id" id="gId" value="0"/>
+      <div class="form-group"><label>Goal Title</label><input type="text" name="Entry.Title" id="gTitle" class="form-control" required/></div>
+      <div class="form-group">
+        <label>Type</label>
+        <select name="Entry.Type" id="gType" class="form-control">
+          <option>Weight</option><option>Nutrition</option><option>Workout</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Target Value</label><input type="number" step="0.1" name="Entry.TargetValue" id="gTarget" class="form-control" required/></div>
+        <div class="form-group"><label>Current Value</label><input type="number" step="0.1" name="Entry.CurrentValue" id="gCurrent" class="form-control" required/></div>
+      </div>
+      <div class="form-group">
+        <label>Suggested Timeline (weeks)</label>
+        <select name="WeeksToTarget" id="gWeeks" class="form-control" required>
+          <option value="2">2 weeks (quick start)</option>
+          <option value="4">4 weeks</option>
+          <option value="6">6 weeks</option>
+          <option value="8" selected>8 weeks</option>
+          <option value="12">12 weeks</option>
+          <option value="16">16 weeks</option>
+          <option value="24">24 weeks</option>
+        </select>
+        <small class="text-muted" id="gWeeksHint">Suggestions adjust based on your goal title and type.</small>
+      </div>
+      <div class="form-group"><label><input type="checkbox" name="Entry.IsCompleted" id="gDone" value="true"/> Mark as completed</label></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('goalModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+@section Scripts {
+<script>
+function getWeekSuggestions(title, type) {
+  const t = (title || '').toLowerCase();
+  const goalType = (type || '').toLowerCase();
+
+  if (t.includes('lose') || t.includes('weight loss')) return [4, 8, 12, 16, 24];
+  if (t.includes('build') || t.includes('muscle')) return [8, 12, 16, 24];
+  if (t.includes('run') || t.includes('cardio') || t.includes('endurance')) return [4, 6, 8, 12, 16];
+
+  if (goalType === 'weight') return [4, 8, 12, 16, 24];
+  if (goalType === 'workout') return [2, 4, 6, 8, 12];
+  if (goalType === 'nutrition') return [2, 4, 6, 8, 12];
+
+  return [2, 4, 6, 8, 12, 16, 24];
+}
+
+function updateWeekSuggestions(preferredWeeks) {
+  const title = document.getElementById('gTitle').value;
+  const type = document.getElementById('gType').value;
+  const select = document.getElementById('gWeeks');
+  const values = getWeekSuggestions(title, type);
+
+  select.innerHTML = values.map(w => {
+    const label = w === 2 ? `${w} weeks (quick start)` : `${w} weeks`;
+    return `<option value="${w}">${label}</option>`;
+  }).join('');
+
+  const base = preferredWeeks ?? parseInt(select.dataset.current || '8', 10);
+  const nearest = values.reduce((a, b) => Math.abs(b - base) < Math.abs(a - base) ? b : a);
+  select.value = String(nearest);
+  select.dataset.current = String(nearest);
+}
+
+function editGoal(g) {
+  document.getElementById('gId').value = g.id;
+  document.getElementById('gTitle').value = g.title;
+  document.getElementById('gType').value = g.type;
+  document.getElementById('gTarget').value = g.targetValue;
+  document.getElementById('gCurrent').value = g.currentValue;
+  const today = new Date();
+  const deadline = new Date(g.deadline + 'T00:00:00');
+  const diffDays = Math.max(1, Math.ceil((deadline - today) / (1000 * 60 * 60 * 24)));
+  const diffWeeks = Math.max(1, Math.round(diffDays / 7));
+  updateWeekSuggestions(diffWeeks);
+  document.getElementById('gDone').checked = g.isCompleted;
+  document.getElementById('goalModalTitle').textContent = 'Edit Goal';
+  openModal('goalModal');
+}
+
+document.getElementById('gTitle').addEventListener('input', () => updateWeekSuggestions());
+document.getElementById('gType').addEventListener('change', () => updateWeekSuggestions());
+updateWeekSuggestions(8);
+</script>
+}

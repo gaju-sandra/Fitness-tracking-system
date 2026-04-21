@@ -1,0 +1,241 @@
+@page "/DashboardLegacy"
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div>
+            <h1 style="margin: 0 0 4px 0; font-size: 1.8rem;">Welcome back, @User.Identity?.Name! 👋</h1>
+            <p style="margin: 0; color: var(--muted);">Here's your fitness overview for today</p>
+        </div>
+        <a href="/Workouts/Create" class="btn btn-primary">+ Log Workout</a>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">⚖️</div>
+            <div>
+                <div class="stat-label">Current Weight</div>
+                <div class="stat-value">72.5 kg</div>
+                <div class="muted-small">↓ 2.0 kg from start</div>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">🔥</div>
+            <div>
+                <div class="stat-label">Today's Calories</div>
+                <div class="stat-value">1,850 kcal</div>
+                <div class="muted-small">1,500 goal | 350 over</div>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">💪</div>
+            <div>
+                <div class="stat-label">Workouts This Week</div>
+                <div class="stat-value">4</div>
+                <div class="muted-small">1 more to reach goal</div>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">😊</div>
+            <div>
+                <div class="stat-label">Mood Today</div>
+                <div class="stat-value">4/5</div>
+                <div class="muted-small">Feeling great!</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="dashboard-grid" style="margin-top: 20px;">
+        <!-- Goals Section -->
+        <div class="col-8">
+            <div class="dash-card">
+                <h2 style="margin: 0 0 14px 0; font-size: 1.2rem;">🎯 Your Goals</h2>
+                <div class="goals-list">
+                    <div class="goal-card">
+                        <div class="goal-card-header">
+                            <div>
+                                <div style="font-weight: 700;">Lose 5kg</div>
+                                <div class="goal-meta">Weight • Due Aug 1</div>
+                            </div>
+                            <span class="goal-type-badge">45%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 45%;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 0.85rem;">
+                            <span>Current: 70.5kg</span>
+                            <span>Target: 67.5kg</span>
+                        </div>
+                    </div>
+                    
+                    <div class="goal-card">
+                        <div class="goal-card-header">
+                            <div>
+                                <div style="font-weight: 700;">Run 5km Daily</div>
+                                <div class="goal-meta">Workout • Due Jul 1</div>
+                            </div>
+                            <span class="goal-type-badge" style="background: var(--success);">60%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 60%; background: var(--success);"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 0.85rem;">
+                            <span>Current: 3km</span>
+                            <span>Target: 5km</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Badges Section -->
+        <div class="col-4">
+            <div class="dash-card">
+                <h2 style="margin: 0 0 14px 0; font-size: 1.2rem;">🏆 Badges</h2>
+                <div class="badges-grid">
+                    <div class="badge-item" title="Completed your first workout">🏋️</div>
+                    <div class="badge-item" title="Worked out 3 days in a row">🔥</div>
+                    <div class="badge-item" title="Logged 10 meals">🥗</div>
+                    <div class="badge-item" title="First weight log">⚖️</div>
+                </div>
+                <p class="muted-small" style="margin-top: 12px; text-align: center;">
+                    4 of 12 badges earned
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workout & Nutrition Grid -->
+    <div class="dashboard-grid">
+        <!-- Recent Workouts -->
+        <div class="col-6">
+            <div class="dash-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <h2 style="margin: 0; font-size: 1.2rem;">💪 Recent Workouts</h2>
+                    <a href="/Workouts" style="color: var(--accent); text-decoration: none; font-size: 0.9rem;">View all</a>
+                </div>
+                <div class="card-list">
+                    <div class="workout-item">
+                        <div>
+                            <div style="font-weight: 700;">Morning Cardio</div>
+                            <div class="muted-small">35 min • 280 kcal burned</div>
+                        </div>
+                        <span class="badge success">Completed</span>
+                    </div>
+                    <div class="workout-item">
+                        <div>
+                            <div style="font-weight: 700;">Strength Builder</div>
+                            <div class="muted-small">45 min • 320 kcal burned</div>
+                        </div>
+                        <span class="badge success">Completed</span>
+                    </div>
+                    <div class="workout-item">
+                        <div>
+                            <div style="font-weight: 700;">HIIT Blast</div>
+                            <div class="muted-small">30 min • 250 kcal burned</div>
+                        </div>
+                        <span class="badge success">Completed</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Today's Nutrition -->
+        <div class="col-6">
+            <div class="dash-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <h2 style="margin: 0; font-size: 1.2rem;">🍎 Today's Nutrition</h2>
+                    <a href="/Nutrition" style="color: var(--accent); text-decoration: none; font-size: 0.9rem;">Log meal</a>
+                </div>
+                <div class="card-list">
+                    <div class="nutrition-item">
+                        <div>
+                            <div style="font-weight: 700;">Breakfast</div>
+                            <div class="muted-small">Banana + Milk • 150 kcal</div>
+                        </div>
+                        <span class="meal-badge">✓</span>
+                    </div>
+                    <div class="nutrition-item">
+                        <div>
+                            <div style="font-weight: 700;">Lunch</div>
+                            <div class="muted-small">Beans + Ugali • 694 kcal</div>
+                        </div>
+                        <span class="meal-badge">✓</span>
+                    </div>
+                    <div class="nutrition-item">
+                        <div>
+                            <div style="font-weight: 700;">Dinner</div>
+                            <div class="muted-small">Chicken Breast • 247.5 kcal</div>
+                        </div>
+                        <span class="meal-badge">✓</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mood & Insights -->
+    <div class="dashboard-grid">
+        <div class="col-6">
+            <div class="dash-card">
+                <h2 style="margin: 0 0 14px 0; font-size: 1.2rem;">😊 Mood Today</h2>
+                <div class="mood-display">
+                    <div>
+                        <div class="muted-small">Mood Score</div>
+                        <div class="mood-bar">
+                            <div class="mood-fill" style="width: 80%;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 6px; font-size: 0.85rem;">
+                            <span>4/5 - Feeling great!</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 12px;">
+                        <div class="muted-small">Energy Level</div>
+                        <div class="mood-bar">
+                            <div class="energy-fill" style="width: 100%;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 6px; font-size: 0.85rem;">
+                            <span>5/5 - Very energetic!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Insights -->
+        <div class="col-6">
+            <div class="dash-card">
+                <h2 style="margin: 0 0 14px 0; font-size: 1.2rem;">🤖 Smart Insights</h2>
+                <div class="ai-insight">
+                    <div style="font-weight: 700; margin-bottom: 6px;">Great progress! 🎉</div>
+                    <p style="margin: 0; color: var(--muted); font-size: 0.9rem;">
+                        You're on track to lose 5kg by August. Keep up 1 more workout per week to accelerate results.
+                    </p>
+                </div>
+                <div class="ai-insight" style="margin-top: 10px;">
+                    <div style="font-weight: 700; margin-bottom: 6px;">Nutrition Tip 💡</div>
+                    <p style="margin: 0; color: var(--muted); font-size: 0.9rem;">
+                        Add more protein to your breakfast. It helps maintain energy and muscle during workouts.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div style="margin-top: 20px; display: flex; gap: 8px; flex-wrap: wrap;">
+        <a href="/Workouts/Create" class="action-btn">+ Log Workout</a>
+        <a href="/Nutrition/Create" class="action-btn">+ Log Meal</a>
+        <a href="/Goals/Create" class="action-btn">+ New Goal</a>
+        <a href="/MoodLogs/Create" class="action-btn">+ Log Mood</a>
+        <a href="/BodyWeights/Create" class="action-btn">+ Log Weight</a>
+    </div>
+</div>

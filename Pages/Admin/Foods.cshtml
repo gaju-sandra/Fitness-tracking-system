@@ -1,0 +1,95 @@
+@page
+@model fit.Pages.Admin.FoodsModel
+@{ ViewData["Title"] = "Manage Foods"; }
+
+<div class="page-header">
+  <h1>🥗 Manage Foods</h1>
+  @if (Model.IsAdmin) { <button class="btn btn-primary" onclick="openModal('foodModal')">+ Add Food</button> }
+</div>
+
+@if (TempData["Message"] != null) { <div class="alert alert-success">@TempData["Message"]</div> }
+
+<div class="filter-bar">
+  <input type="text" id="foodSearch" class="form-control" placeholder="Search foods..." oninput="filterTable('foodTable', this.value)"/>
+  <label><input type="checkbox" id="localOnly" onchange="filterLocal()"/> 🇷🇼 Local foods only</label>
+</div>
+
+<div class="card">
+  <table class="data-table" id="foodTable">
+    <thead><tr><th>Name</th><th>Category</th><th>Cal/100g</th><th>Protein</th><th>Carbs</th><th>Fat</th><th>Local</th>@if (Model.IsAdmin){<th>Actions</th>}</tr></thead>
+    <tbody>
+      @foreach (var f in Model.Foods)
+      {
+        <tr data-local="@f.IsLocal.ToString().ToLower()">
+          <td>@f.Name</td><td>@f.Category</td>
+          <td>@f.CaloriesPer100g</td><td>@f.ProteinPer100g g</td>
+          <td>@f.CarbsPer100g g</td><td>@f.FatPer100g g</td>
+          <td>@(f.IsLocal ? "🇷🇼" : "-")</td>
+          @if (Model.IsAdmin)
+          {
+            <td class="actions">
+              <button class="btn btn-sm btn-outline" onclick='editFood(@System.Text.Json.JsonSerializer.Serialize(f))'>Edit</button>
+              <form method="post" asp-page-handler="Delete" style="display:inline" onsubmit="return confirm('Delete?')">
+                <input type="hidden" name="id" value="@f.Id"/>
+                <button class="btn btn-sm btn-danger">Delete</button>
+              </form>
+            </td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+@if (Model.IsAdmin)
+{
+<div class="modal-overlay" id="foodModal">
+  <div class="modal">
+    <div class="modal-header"><h3 id="foodModalTitle">Add Food</h3><button type="button" onclick="closeModal('foodModal')">✕</button></div>
+    <form method="post" asp-page-handler="Save">
+      <input type="hidden" name="EditFood.Id" id="fId" value="0"/>
+      <div class="form-row">
+        <div class="form-group"><label>Name</label><input type="text" name="EditFood.Name" id="fName" class="form-control" required/></div>
+        <div class="form-group"><label>Category</label><input type="text" name="EditFood.Category" id="fCat" class="form-control" required/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Calories/100g</label><input type="number" step="0.1" name="EditFood.CaloriesPer100g" id="fCal" class="form-control" required/></div>
+        <div class="form-group"><label>Protein/100g</label><input type="number" step="0.1" name="EditFood.ProteinPer100g" id="fPro" class="form-control" required/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Carbs/100g</label><input type="number" step="0.1" name="EditFood.CarbsPer100g" id="fCarb" class="form-control" required/></div>
+        <div class="form-group"><label>Fat/100g</label><input type="number" step="0.1" name="EditFood.FatPer100g" id="fFat" class="form-control" required/></div>
+      </div>
+      <input type="hidden" name="EditFood.IsLocal" value="false"/>
+      <div class="form-group"><label><input type="checkbox" name="EditFood.IsLocal" id="fLocal" value="true"/> 🇷🇼 Local Rwandan Food</label></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('foodModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+}
+
+@section Scripts {
+<script>
+function editFood(f) {
+  document.getElementById('fId').value = f.id;
+  document.getElementById('fName').value = f.name;
+  document.getElementById('fCat').value = f.category;
+  document.getElementById('fCal').value = f.caloriesPer100g;
+  document.getElementById('fPro').value = f.proteinPer100g;
+  document.getElementById('fCarb').value = f.carbsPer100g;
+  document.getElementById('fFat').value = f.fatPer100g;
+  document.getElementById('fLocal').checked = f.isLocal;
+  document.getElementById('foodModalTitle').textContent = 'Edit Food';
+  openModal('foodModal');
+}
+function filterLocal() {
+  const localOnly = document.getElementById('localOnly').checked;
+  document.querySelectorAll('#foodTable tbody tr').forEach(r => {
+    r.style.display = (!localOnly || r.dataset.local === 'true') ? '' : 'none';
+  });
+}
+</script>
+}

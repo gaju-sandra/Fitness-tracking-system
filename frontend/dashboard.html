@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | FitTrack Premium</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 40px; height: 40px; background: var(--accent-primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white;">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <span style="font-size: 1.5rem; font-weight: 800; color: white;">FIT<span class="gradient-text">TRACK</span></span>
+                </a>
+            </div>
+
+            <nav class="nav-links">
+                <div class="nav-item"><a href="index.html" class="nav-link"><i class="fas fa-house"></i> <span>Home</span></a></div>
+                <div class="nav-item"><a href="dashboard.html" class="nav-link active"><i class="fas fa-chart-pie"></i> <span>Dashboard</span></a></div>
+                <div class="nav-item"><a href="nutrition.html" class="nav-link"><i class="fas fa-apple-whole"></i> <span>Nutrition</span></a></div>
+                <div class="nav-item"><a href="workouts.html" class="nav-link"><i class="fas fa-dumbbell"></i> <span>Workouts</span></a></div>
+                <div class="nav-item"><a href="goals.html" class="nav-link"><i class="fas fa-bullseye"></i> <span>Goals</span></a></div>
+                <div class="nav-item"><a href="admin.html" class="nav-link"><i class="fas fa-user-shield"></i> <span>Admin</span></a></div>
+            </nav>
+
+            <div style="margin-top: auto;">
+                <div class="glass-card" style="padding: 12px; margin-bottom: 16px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <img src="https://ui-avatars.com/api/?name=Alice+Uwase&background=3b82f6&color=fff" style="width: 40px; height: 40px; border-radius: 50%;" alt="User">
+                        <div>
+                            <p style="font-size: 0.85rem; font-weight: 700;">Alice Uwase</p>
+                            <p style="font-size: 0.75rem; color: var(--text-muted);">Client</p>
+                        </div>
+                    </div>
+                </div>
+                <a href="#" class="nav-link"><i class="fas fa-right-from-bracket"></i> <span>Logout</span></a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+                <div>
+                    <h1 style="font-size: 2rem;">Welcome back, <span class="gradient-text">Alice!</span></h1>
+                    <p style="color: var(--text-muted);">You've burned <strong style="color: var(--text-main);">450 kcal</strong> more than yesterday. Keep it up!</p>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn-premium" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);"><i class="far fa-calendar"></i> April 19, 2026</button>
+                    <button class="btn-premium"><i class="fas fa-plus"></i> Quick Log</button>
+                </div>
+            </header>
+
+            <!-- Stats Overview -->
+            <div class="stats-grid">
+                <div class="glass-card stat-item">
+                    <span class="stat-label">Daily Calories</span>
+                    <span class="stat-value">1,850 <span style="font-size: 1rem; color: var(--text-muted);">/ 2,200</span></span>
+                    <div class="progress-bar" style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; margin-top: 12px;">
+                        <div style="width: 84%; height: 100%; background: var(--accent-primary); border-radius: 3px;"></div>
+                    </div>
+                </div>
+                <div class="glass-card stat-item">
+                    <span class="stat-label">Current Weight</span>
+                    <span class="stat-value">70.5 <span style="font-size: 1rem; color: var(--text-muted);">kg</span></span>
+                    <span style="color: var(--success); font-size: 0.85rem; margin-top: 4px;"><i class="fas fa-caret-down"></i> 0.7kg from last week</span>
+                </div>
+                <div class="glass-card stat-item">
+                    <span class="stat-label">Workout Streak</span>
+                    <span class="stat-value">5 <span style="font-size: 1rem; color: var(--text-muted);">Days</span></span>
+                    <div style="display: flex; gap: 4px; margin-top: 12px;">
+                        <i class="fas fa-fire" style="color: #f59e0b;"></i>
+                        <i class="fas fa-fire" style="color: #f59e0b;"></i>
+                        <i class="fas fa-fire" style="color: #f59e0b;"></i>
+                        <i class="fas fa-fire" style="color: #f59e0b;"></i>
+                        <i class="fas fa-fire" style="color: #f59e0b;"></i>
+                    </div>
+                </div>
+                <div class="glass-card stat-item">
+                    <span class="stat-label">Average Mood</span>
+                    <span class="stat-value">Great <span style="font-size: 1rem; color: var(--text-muted);">😊</span></span>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Consistent energy levels.</p>
+                </div>
+            </div>
+
+            <!-- Main Dashboard Grid -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+                <!-- Activity Chart -->
+                <div class="glass-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <h3 style="font-size: 1.25rem;">Activity Over Time</h3>
+                        <select class="btn-premium" style="padding: 6px 12px; background: transparent; border: 1px solid var(--glass-border); font-size: 0.85rem;">
+                            <option>Last 7 Days</option>
+                            <option>Last 30 Days</option>
+                        </select>
+                    </div>
+                    <div id="activityChart" class="chart-container">
+                        <!-- ApexCharts will render here -->
+                        <div style="height: 300px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); border: 1px dashed var(--glass-border); border-radius: 12px;">
+                            Activity Chart Visualization
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Badges -->
+                <div class="glass-card">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 24px;">Achievements</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 16px; text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: 8px;">🔥</div>
+                            <p style="font-size: 0.8rem; font-weight: 700;">5 Day Streak</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 16px; text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: 8px;">🏋️</div>
+                            <p style="font-size: 0.8rem; font-weight: 700;">Heavy Lifter</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 16px; text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: 8px;">🥗</div>
+                            <p style="font-size: 0.8rem; font-weight: 700;">Clean Eater</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 16px; text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: 8px;">🏃</div>
+                            <p style="font-size: 0.8rem; font-weight: 700;">Marathoner</p>
+                        </div>
+                    </div>
+                    <button class="btn-premium" style="width: 100%; margin-top: 24px; background: transparent; border: 1px solid var(--glass-border);">View All Badges</button>
+                </div>
+            </div>
+
+            <!-- Bottom Row -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px;">
+                <!-- Recent Workouts -->
+                <div class="glass-card">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 24px;">Recent Workouts</h3>
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 12px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 40px; height: 40px; background: var(--accent-primary); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <div>
+                                    <p style="font-weight: 700;">Morning Cardio</p>
+                                    <p style="font-size: 0.75rem; color: var(--text-muted);">Yesterday • 35 mins</p>
+                                </div>
+                            </div>
+                            <span style="font-weight: 700;">280 kcal</span>
+                        </div>
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 12px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 40px; height: 40px; background: var(--accent-vibrant); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-dumbbell"></i>
+                                </div>
+                                <div>
+                                    <p style="font-weight: 700;">Strength Training</p>
+                                    <p style="font-size: 0.75rem; color: var(--text-muted);">2 days ago • 45 mins</p>
+                                </div>
+                            </div>
+                            <span style="font-weight: 700;">320 kcal</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nutrition Summary -->
+                <div class="glass-card">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 24px;">Today's Nutrition</h3>
+                    <div style="display: flex; gap: 20px; align-items: center;">
+                        <div id="nutritionPie" style="width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; border: 4px solid var(--accent-primary); border-radius: 50%; font-weight: 800; font-size: 1.2rem;">
+                            84%
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 12px;">
+                            <div>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px;">
+                                    <span>Protein</span>
+                                    <span>120g / 150g</span>
+                                </div>
+                                <div style="height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px;">
+                                    <div style="width: 80%; height: 100%; background: var(--accent-primary); border-radius: 2px;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px;">
+                                    <span>Carbs</span>
+                                    <span>210g / 250g</span>
+                                </div>
+                                <div style="height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px;">
+                                    <div style="width: 84%; height: 100%; background: var(--accent-secondary); border-radius: 2px;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px;">
+                                    <span>Fats</span>
+                                    <span>45g / 60g</span>
+                                </div>
+                                <div style="height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px;">
+                                    <div style="width: 75%; height: 100%; background: var(--accent-vibrant); border-radius: 2px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Chart Library -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="js/charts.js"></script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workouts | FitTrack Premium</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 40px; height: 40px; background: var(--accent-primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white;">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <span style="font-size: 1.5rem; font-weight: 800; color: white;">FIT<span class="gradient-text">TRACK</span></span>
+                </a>
+            </div>
+
+            <nav class="nav-links">
+                <div class="nav-item"><a href="index.html" class="nav-link"><i class="fas fa-house"></i> <span>Home</span></a></div>
+                <div class="nav-item"><a href="dashboard.html" class="nav-link"><i class="fas fa-chart-pie"></i> <span>Dashboard</span></a></div>
+                <div class="nav-item"><a href="nutrition.html" class="nav-link"><i class="fas fa-apple-whole"></i> <span>Nutrition</span></a></div>
+                <div class="nav-item"><a href="workouts.html" class="nav-link active"><i class="fas fa-dumbbell"></i> <span>Workouts</span></a></div>
+                <div class="nav-item"><a href="goals.html" class="nav-link"><i class="fas fa-bullseye"></i> <span>Goals</span></a></div>
+                <div class="nav-item"><a href="admin.html" class="nav-link"><i class="fas fa-user-shield"></i> <span>Admin</span></a></div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+                <div>
+                    <h1 style="font-size: 2rem;">Workout <span class="gradient-text">Intelligence</span></h1>
+                    <p style="color: var(--text-muted);">Track your progress and follow plans assigned by your trainer.</p>
+                </div>
+                <button class="btn-premium"><i class="fas fa-plus"></i> New Workout</button>
+            </header>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+                <!-- Workout Plans -->
+                <div style="display: flex; flex-direction: column; gap: 24px;">
+                    <div class="glass-card" style="padding: 0; overflow: hidden; height: 260px; position: relative;">
+                        <img src="images/trainer_client_session_1776553896060.png" style="width: 100%; height: 100%; object-fit: cover;" alt="Trainer">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(90deg, rgba(7, 9, 18, 0.9), transparent); padding: 40px; display: flex; flex-direction: column; justify-content: center; gap: 12px;">
+                            <span class="status-pill status-pill-primary" style="background: var(--accent-primary); color: white; align-self: flex-start;">ASSIGNED BY TRAINER</span>
+                            <h2 style="font-size: 1.8rem;">Personal Training <br>Focus Phase</h2>
+                            <p style="color: #94a3b8; max-width: 300px;">Jean Trainer has updated your strength schedule for this week.</p>
+                            <a href="#" class="btn-premium" style="align-self: flex-start;">View Schedule</a>
+                        </div>
+                    </div>
+
+                    <div class="glass-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                            <h3>Available Plans</h3>
+                            <div class="filter-bar">
+                                <input type="text" placeholder="Search plans..." class="btn-premium" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 8px 16px;">
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="glass-card" style="padding: 16px; background: rgba(255,255,255,0.02);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                                    <span class="status-pill status-pill-primary" style="background: rgba(59, 130, 246, 0.1); color: var(--accent-primary);">Beginner</span>
+                                    <span style="color: var(--text-muted); font-size: 0.8rem;">30 Mins</span>
+                                </div>
+                                <h4 style="font-size: 1.1rem; margin-bottom: 8px;">Morning Cardio</h4>
+                                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">Low intensity aerobic workout to start your day.</p>
+                                <button class="btn-premium" style="width: 100%; font-size: 0.85rem;">Start Workout</button>
+                            </div>
+                            <div class="glass-card" style="padding: 16px; background: rgba(255,255,255,0.02);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                                    <span class="status-pill status-pill-primary" style="background: rgba(139, 92, 246, 0.1); color: var(--accent-vibrant);">Intermediate</span>
+                                    <span style="color: var(--text-muted); font-size: 0.8rem;">45 Mins</span>
+                                </div>
+                                <h4 style="font-size: 1.1rem; margin-bottom: 8px;">Strength Builder</h4>
+                                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">Compound movements focused on muscle growth.</p>
+                                <button class="btn-premium" style="width: 100%; font-size: 0.85rem;">Start Workout</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar Activity -->
+                <div class="glass-card">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 24px;">Recent History</h3>
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div style="position: relative; padding-left: 24px; border-left: 2px solid var(--glass-border);">
+                            <div style="position: absolute; left: -7px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--accent-primary);"></div>
+                            <p style="font-weight: 700;">Morning Cardio</p>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">Completed • April 18</p>
+                            <p style="font-size: 0.85rem; margin-top: 4px;">"Felt great, energy was high!"</p>
+                        </div>
+                        <div style="position: relative; padding-left: 24px; border-left: 2px solid var(--glass-border);">
+                            <div style="position: absolute; left: -7px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--accent-vibrant);"></div>
+                            <p style="font-weight: 700;">Strength Training</p>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">Completed • April 16</p>
+                            <p style="font-size: 0.85rem; margin-top: 4px;">"Increased deadlift weight by 5kg."</p>
+                        </div>
+                        <div style="position: relative; padding-left: 24px; border-left: 2px solid var(--glass-border);">
+                            <div style="position: absolute; left: -7px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--text-muted);"></div>
+                            <p style="font-weight: 700;">HIIT Blast</p>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">Completed • April 14</p>
+                        </div>
+                    </div>
+                    <button class="btn-premium" style="width: 100%; margin-top: 32px; background: transparent; border: 1px solid var(--glass-border);">Export History (CSV)</button>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

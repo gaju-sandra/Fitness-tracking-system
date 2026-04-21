@@ -1,0 +1,64 @@
+@page
+@model fit.Pages.Admin.WorkoutPlansModel
+@{ ViewData["Title"] = "Workout Plans"; }
+
+<div class="page-header">
+  <h1>🏋️ Workout Plans</h1>
+  <button class="btn btn-primary" onclick="openModal('planModal')">+ Add Plan</button>
+</div>
+
+@if (TempData["Message"] != null) { <div class="alert alert-success">@TempData["Message"]</div> }
+
+<div class="plans-grid">
+  @foreach (var p in Model.Plans)
+  {
+    <div class="plan-card">
+      <div class="plan-difficulty @p.Difficulty.ToLower()">@p.Difficulty</div>
+      <h3>@p.Name</h3>
+      <p>@p.Description</p>
+      <div class="plan-actions">
+        <button class="btn btn-sm btn-outline" onclick='editPlan(@System.Text.Json.JsonSerializer.Serialize(new { p.Id, p.Name, p.Description, p.Difficulty, p.CreatedByUserId }))'>Edit</button>
+        <form method="post" asp-page-handler="Delete" style="display:inline" onsubmit="return confirm('Delete plan?')">
+          <input type="hidden" name="id" value="@p.Id"/>
+          <button class="btn btn-sm btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+  }
+</div>
+
+<div class="modal-overlay" id="planModal">
+  <div class="modal">
+    <div class="modal-header"><h3 id="planModalTitle">Add Plan</h3><button type="button" onclick="closeModal('planModal')">✕</button></div>
+    <form method="post" asp-page-handler="Save">
+      <input type="hidden" name="EditPlan.Id" id="pId" value="0"/>
+      <input type="hidden" name="EditPlan.CreatedByUserId" id="pCreator" value="@Model.SessionUserId"/>
+      <div class="form-group"><label>Plan Name</label><input type="text" name="EditPlan.Name" id="pName" class="form-control" required/></div>
+      <div class="form-group"><label>Description</label><textarea name="EditPlan.Description" id="pDesc" class="form-control" rows="3"></textarea></div>
+      <div class="form-group">
+        <label>Difficulty</label>
+        <select name="EditPlan.Difficulty" id="pDiff" class="form-control">
+          <option>Beginner</option><option>Intermediate</option><option>Advanced</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('planModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+@section Scripts {
+<script>
+function editPlan(p) {
+  document.getElementById('pId').value = p.id;
+  document.getElementById('pName').value = p.name;
+  document.getElementById('pDesc').value = p.description;
+  document.getElementById('pDiff').value = p.difficulty;
+  document.getElementById('pCreator').value = p.createdByUserId;
+  document.getElementById('planModalTitle').textContent = 'Edit Plan';
+  openModal('planModal');
+}
+</script>
+}
