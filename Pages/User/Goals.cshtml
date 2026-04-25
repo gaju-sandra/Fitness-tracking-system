@@ -14,14 +14,16 @@
   {
     var pct = g.TargetValue > 0 ? (int)Math.Min(100, g.CurrentValue / g.TargetValue * 100) : 0;
     var daysLeft = (g.Deadline - DateTime.UtcNow).Days;
+    var displayType = g.Type == "Weight" ? "Weight Loss" : g.Type;
     <div class="goal-card @(g.IsCompleted ? "completed" : "")">
       <div class="goal-card-header">
         <div>
           <h3>@g.Title @(g.IsCompleted ? "✅" : "")</h3>
-          <span class="goal-type-badge">@g.Type</span>
+          <span class="goal-type-badge">@displayType</span>
+          <span class="goal-type-badge">Trainer: @g.PreferredTrainerGender</span>
         </div>
         <div class="goal-card-actions">
-          <button class="btn btn-sm btn-outline" onclick='editGoal(@System.Text.Json.JsonSerializer.Serialize(new { g.Id, g.Title, g.Type, g.TargetValue, g.CurrentValue, Deadline = g.Deadline.ToString("yyyy-MM-dd"), g.IsCompleted }))'>Edit</button>
+          <button class="btn btn-sm btn-outline" onclick='editGoal(@System.Text.Json.JsonSerializer.Serialize(new { g.Id, g.Title, g.Type, g.TargetValue, g.CurrentValue, g.PreferredTrainerGender, Deadline = g.Deadline.ToString("yyyy-MM-dd"), g.IsCompleted }))'>Edit</button>
           <form method="post" asp-page-handler="Delete" style="display:inline" onsubmit="return confirm('Delete goal?')">
             <input type="hidden" name="id" value="@g.Id"/>
             <button class="btn btn-sm btn-danger">Delete</button>
@@ -51,7 +53,7 @@
       <div class="form-group">
         <label>Type</label>
         <select name="Entry.Type" id="gType" class="form-control">
-          <option>Weight</option><option>Nutrition</option><option>Workout</option>
+          <option>Weight Loss</option><option>Nutrition</option><option>Workout</option>
         </select>
       </div>
       <div class="form-row">
@@ -59,17 +61,26 @@
         <div class="form-group"><label>Current Value</label><input type="number" step="0.1" name="Entry.CurrentValue" id="gCurrent" class="form-control" required/></div>
       </div>
       <div class="form-group">
+        <label>Preferred Trainer Gender</label>
+        <select name="Entry.PreferredTrainerGender" id="gTrainerGender" class="form-control">
+          <option value="Any" selected>Any</option>
+          <option value="Female">Female</option>
+          <option value="Male">Male</option>
+        </select>
+      </div>
+      <div class="form-group">
         <label>Suggested Timeline (weeks)</label>
         <select name="WeeksToTarget" id="gWeeks" class="form-control" required>
-          <option value="2">2 weeks (quick start)</option>
           <option value="4">4 weeks</option>
-          <option value="6">6 weeks</option>
           <option value="8" selected>8 weeks</option>
           <option value="12">12 weeks</option>
           <option value="16">16 weeks</option>
           <option value="24">24 weeks</option>
         </select>
-        <small class="text-muted" id="gWeeksHint">Suggestions adjust based on your goal title and type.</small>
+        <small class="text-muted" id="gWeeksHint">Choose one timeline: 4, 8, 12, 16, or 24 weeks.</small>
+      </div>
+      <div class="form-group" id="premiumPaymentGroup" style="display:none;">
+        <label><input type="checkbox" name="PremiumWeeksPaid" id="gPremiumPaid" value="true"/> I confirm I paid <strong>500 RWF</strong> for 16/24 weeks premium goal timeline.</label>
       </div>
       <div class="form-group"><label><input type="checkbox" name="Entry.IsCompleted" id="gDone" value="true"/> Mark as completed</label></div>
       <div class="modal-footer">
@@ -84,17 +95,23 @@
 <script>
 function getWeekSuggestions(title, type) {
   const t = (title || '').toLowerCase();
-  const goalType = (type || '').toLowerCase();
+  const goalType = normalizeGoalType(type);
 
-  if (t.includes('lose') || t.includes('weight loss')) return [4, 8, 12, 16, 24];
-  if (t.includes('build') || t.includes('muscle')) return [8, 12, 16, 24];
-  if (t.includes('run') || t.includes('cardio') || t.includes('endurance')) return [4, 6, 8, 12, 16];
+  if (goalType === 'weight loss') return [12, 16, 24, 8, 4];
+  if (goalType === 'nutrition') return [4, 8, 12, 16, 24];
+  if (goalType === 'workout') return [8, 12, 16, 24, 4];
 
-  if (goalType === 'weight') return [4, 8, 12, 16, 24];
-  if (goalType === 'workout') return [2, 4, 6, 8, 12];
-  if (goalType === 'nutrition') return [2, 4, 6, 8, 12];
+  if (t.includes('lose') || t.includes('weight')) return [12, 16, 24, 8, 4];
+  if (t.includes('food') || t.includes('nutrition') || t.includes('diet')) return [4, 8, 12, 16, 24];
+  if (t.includes('run') || t.includes('cardio') || t.includes('workout') || t.includes('endurance')) return [8, 12, 16, 24, 4];
 
-  return [2, 4, 6, 8, 12, 16, 24];
+  return [8, 12, 16, 24, 4];
+}
+
+function normalizeGoalType(type) {
+  const value = String(type || '').trim().toLowerCase();
+  if (value === 'weight') return 'weight loss';
+  return value;
 }
 
 function updateWeekSuggestions(preferredWeeks) {
@@ -104,27 +121,39 @@ function updateWeekSuggestions(preferredWeeks) {
   const values = getWeekSuggestions(title, type);
 
   select.innerHTML = values.map(w => {
-    const label = w === 2 ? `${w} weeks (quick start)` : `${w} weeks`;
-    return `<option value="${w}">${label}</option>`;
+    return `<option value="${w}">${w} weeks</option>`;
   }).join('');
 
   const base = preferredWeeks ?? parseInt(select.dataset.current || '8', 10);
   const nearest = values.reduce((a, b) => Math.abs(b - base) < Math.abs(a - base) ? b : a);
   select.value = String(nearest);
   select.dataset.current = String(nearest);
+  updatePremiumPaymentRequirement();
+}
+
+function updatePremiumPaymentRequirement() {
+  const weeks = parseInt(document.getElementById('gWeeks').value || '0', 10);
+  const group = document.getElementById('premiumPaymentGroup');
+  const paid = document.getElementById('gPremiumPaid');
+  const isPremiumTimeline = weeks === 16 || weeks === 24;
+  group.style.display = isPremiumTimeline ? '' : 'none';
+  if (!isPremiumTimeline) paid.checked = false;
 }
 
 function editGoal(g) {
   document.getElementById('gId').value = g.id;
   document.getElementById('gTitle').value = g.title;
-  document.getElementById('gType').value = g.type;
+  const normalizedType = normalizeGoalType(g.type);
+  document.getElementById('gType').value = normalizedType === 'weight loss' ? 'Weight Loss' : (normalizedType === 'nutrition' ? 'Nutrition' : 'Workout');
   document.getElementById('gTarget').value = g.targetValue;
   document.getElementById('gCurrent').value = g.currentValue;
+  document.getElementById('gTrainerGender').value = g.preferredTrainerGender || 'Any';
   const today = new Date();
   const deadline = new Date(g.deadline + 'T00:00:00');
   const diffDays = Math.max(1, Math.ceil((deadline - today) / (1000 * 60 * 60 * 24)));
   const diffWeeks = Math.max(1, Math.round(diffDays / 7));
   updateWeekSuggestions(diffWeeks);
+  document.getElementById('gPremiumPaid').checked = false;
   document.getElementById('gDone').checked = g.isCompleted;
   document.getElementById('goalModalTitle').textContent = 'Edit Goal';
   openModal('goalModal');
@@ -132,6 +161,7 @@ function editGoal(g) {
 
 document.getElementById('gTitle').addEventListener('input', () => updateWeekSuggestions());
 document.getElementById('gType').addEventListener('change', () => updateWeekSuggestions());
+document.getElementById('gWeeks').addEventListener('change', updatePremiumPaymentRequirement);
 updateWeekSuggestions(8);
 </script>
 }

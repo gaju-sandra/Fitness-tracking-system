@@ -9,6 +9,7 @@ builder.Services.AddDbContext<AppDbContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
     .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddSession(o =>
 {
     o.IdleTimeout = TimeSpan.FromHours(8);
@@ -18,6 +19,31 @@ builder.Services.AddSession(o =>
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await db.Database.ExecuteSqlRawAsync(
+        """
+        IF OBJECT_ID(N'dbo.Notifications', N'U') IS NULL
+        BEGIN
+            CREATE TABLE dbo.Notifications
+            (
+                Id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+                RecipientUserId INT NULL,
+                RecipientRole NVARCHAR(50) NULL,
+                Title NVARCHAR(200) NOT NULL,
+                Message NVARCHAR(1000) NOT NULL,
+                Link NVARCHAR(300) NULL,
+                IsRead BIT NOT NULL CONSTRAINT DF_Notifications_IsRead DEFAULT(0),
+                CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_Notifications_CreatedAt DEFAULT(SYSUTCDATETIME()),
+                CONSTRAINT FK_Notifications_Users_RecipientUserId FOREIGN KEY (RecipientUserId) REFERENCES dbo.Users(Id) ON DELETE CASCADE
+            );
+
+            CREATE INDEX IX_Notifications_RecipientUserId_IsRead_CreatedAt ON dbo.Notifications(RecipientUserId, IsRead, CreatedAt);
+        END;
+        """);
+}
 
 if (!app.Environment.IsDevelopment())
 {

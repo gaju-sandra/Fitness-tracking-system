@@ -1,0 +1,45 @@
+@page
+@model fit.Pages.Notifications.IndexModel
+@{ ViewData["Title"] = "Notifications"; }
+
+<div class="page-header">
+  <h1>🔔 Notifications</h1>
+  <form method="post" asp-page-handler="ReadAll">
+    <button class="btn btn-outline" type="submit">Mark all as read</button>
+  </form>
+</div>
+
+<div class="card">
+  @if (!Model.Items.Any())
+  {
+    <div class="empty-state">No notifications yet.</div>
+  }
+  else
+  {
+    <div class="card-list">
+      @foreach (var n in Model.Items)
+      {
+        <div class="card-item" style="border-left:4px solid @(n.IsRead ? "rgba(255,255,255,0.08)" : "#2563eb");">
+          <div>
+            <div style="font-weight:700;">@n.Title</div>
+            <div class="muted-small">@n.Message</div>
+            <div class="muted-small">@n.CreatedAt.ToLocalTime().ToString("MMM d, yyyy h:mm tt")</div>
+          </div>
+          <div class="actions">
+            @if (!n.IsRead)
+            {
+              <form method="post" asp-page-handler="Read">
+                <input type="hidden" name="id" value="@n.Id" />
+                <button class="btn btn-sm btn-primary" type="submit">Open</button>
+              </form>
+            }
+            else if (!string.IsNullOrWhiteSpace(n.Link))
+            {
+              <a class="btn btn-sm btn-outline" href="@n.Link">Open</a>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

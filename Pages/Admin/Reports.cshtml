@@ -5,9 +5,54 @@
 <div class="page-header">
   <h1>📊 System Reports</h1>
   <div class="export-btns">
-    <button class="btn btn-outline" onclick="exportTableToCSV('report-data', 'fittrack-report.csv')">📥 Export CSV</button>
+    <button class="btn btn-outline" onclick="exportReportCsv()">📥 Export CSV</button>
+    <a class="btn btn-outline" asp-page-handler="ExportExcel" asp-route-role="@Model.RoleFilter" asp-route-name="@Model.NameFilter" asp-route-dateFrom="@Model.DateFrom" asp-route-dateTo="@Model.DateTo">📗 Export Excel</a>
     <button class="btn btn-outline" onclick="window.print()">🖨️ Print / PDF</button>
   </div>
+</div>
+
+<div class="card" style="margin-bottom: 14px;">
+  <form method="get" class="filter-form">
+    <select name="role" class="form-control" style="max-width: 180px;">
+      @if (string.IsNullOrWhiteSpace(Model.RoleFilter))
+      {
+        <option value="" selected>All roles</option>
+      }
+      else
+      {
+        <option value="">All roles</option>
+      }
+      @if (Model.RoleFilter == "Admin")
+      {
+        <option value="Admin" selected>Admin</option>
+      }
+      else
+      {
+        <option value="Admin">Admin</option>
+      }
+      @if (Model.RoleFilter == "Trainer")
+      {
+        <option value="Trainer" selected>Trainer</option>
+      }
+      else
+      {
+        <option value="Trainer">Trainer</option>
+      }
+      @if (Model.RoleFilter == "User")
+      {
+        <option value="User" selected>User</option>
+      }
+      else
+      {
+        <option value="User">User</option>
+      }
+    </select>
+    <input type="text" name="name" value="@Model.NameFilter" class="form-control" style="max-width: 220px;" placeholder="Filter by user name" />
+    <input type="date" name="dateFrom" value="@Model.DateFrom" class="form-control" />
+    <input type="date" name="dateTo" value="@Model.DateTo" class="form-control" />
+    <button type="submit" class="btn btn-primary">Apply filters</button>
+    <a href="/Admin/Reports" class="btn btn-outline">Reset</a>
+  </form>
 </div>
 
 <div class="stats-grid">
@@ -28,6 +73,39 @@
   </div>
 </div>
 
+<div class="card" style="margin-top: 14px;">
+  <h3 style="margin-top: 0;">Recent Activity (Table)</h3>
+  <table class="data-table" id="report-data">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>User</th>
+        <th>Role</th>
+        <th>Category</th>
+        <th>Item</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach (var row in Model.ActivityRows)
+      {
+        <tr>
+          <td>@row.Date.ToString("yyyy-MM-dd")</td>
+          <td>@row.UserName</td>
+          <td>@row.Role</td>
+          <td>@row.Category</td>
+          <td>@row.Item</td>
+          <td>@row.Value.ToString("F0")</td>
+        </tr>
+      }
+      @if (!Model.ActivityRows.Any())
+      {
+        <tr><td colspan="6" class="empty-state">No data found for selected filters.</td></tr>
+      }
+    </tbody>
+  </table>
+</div>
+
 @section Scripts {
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
@@ -46,5 +124,45 @@ new Chart(document.getElementById('workoutChart'), {
   data: { labels: wLabels, datasets: [{ label: 'Workouts', data: wData, backgroundColor: '#6c63ff' }] },
   options: { responsive: true, plugins: { legend: { display: false } } }
 });
+
+function csvCell(value) {
+  return `"${String(value ?? '').replace(/"/g, '""')}"`;
+}
+
+function exportReportCsv() {
+  const rows = [];
+  rows.push(['Section', 'Label', 'Value'].map(csvCell).join(','));
+
+  rows.push(['Summary', 'Total Users', '@Model.TotalUsers'].map(csvCell).join(','));
+  rows.push(['Summary', 'Workout Sessions', '@Model.TotalWorkouts'].map(csvCell).join(','));
+  rows.push(['Summary', 'Nutrition Logs', '@Model.TotalNutritionLogs'].map(csvCell).join(','));
+  rows.push(['Summary', 'Avg kcal/day', '@Model.AvgCaloriesPerDay.ToString("F0")'].map(csvCell).join(','));
+
+  roleLabels.forEach((label, i) => {
+    rows.push(['Users by Role', label, roleData[i] ?? 0].map(csvCell).join(','));
+  });
+
+  wLabels.forEach((label, i) => {
+    rows.push(['Workouts by Month', label, wData[i] ?? 0].map(csvCell).join(','));
+  });
+
+  rows.push('');
+  rows.push(['Date', 'User', 'Role', 'Category', 'Item', 'Value'].map(csvCell).join(','));
+  document.querySelectorAll('#report-data tbody tr').forEach(tr => {
+    const cols = Array.from(tr.querySelectorAll('td')).map(td => csvCell(td.textContent?.trim() ?? ''));
+    if (cols.length) rows.push(cols.join(','));
+  });
+
+  const csv = rows.join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'fittrack-report.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
 </script>
 }

@@ -7,10 +7,12 @@ using System.Security.Cryptography;
 
 namespace fit.Pages.Auth;
 
-public class TwoFactorModel(AppDbContext db, IEmailSender emailSender) : BasePageModel
+public class TwoFactorModel(AppDbContext db, IEmailSender emailSender, INotificationService notifications) : BasePageModel
 {
     private const string PendingRegNameKey = "PendingReg:Name";
     private const string PendingRegEmailKey = "PendingReg:Email";
+    private const string PendingRegGenderKey = "PendingReg:Gender";
+    private const string PendingRegLocationIdKey = "PendingReg:LocationId";
     private const string PendingRegPasswordHashKey = "PendingReg:PasswordHash";
     private const string PendingRegRoleIdKey = "PendingReg:RoleId";
     private const string PendingRegOtpHashKey = "PendingReg:OtpHash";
@@ -66,13 +68,15 @@ public class TwoFactorModel(AppDbContext db, IEmailSender emailSender) : BasePag
 
         var name = HttpContext.Session.GetString(PendingRegNameKey);
         var email = HttpContext.Session.GetString(PendingRegEmailKey);
+        var gender = HttpContext.Session.GetString(PendingRegGenderKey);
+        var locationId = HttpContext.Session.GetInt32(PendingRegLocationIdKey);
         var passwordHash = HttpContext.Session.GetString(PendingRegPasswordHashKey);
         var roleId = HttpContext.Session.GetInt32(PendingRegRoleIdKey);
         var otpHash = HttpContext.Session.GetString(PendingRegOtpHashKey);
         var otpSalt = HttpContext.Session.GetString(PendingRegOtpSaltKey);
         var otpExpires = HttpContext.Session.GetString(PendingRegOtpExpiresKey);
 
-        if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(passwordHash) ||
+        if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(gender) || !locationId.HasValue || string.IsNullOrWhiteSpace(passwordHash) ||
             !roleId.HasValue || string.IsNullOrWhiteSpace(otpHash) || string.IsNullOrWhiteSpace(otpSalt) || string.IsNullOrWhiteSpace(otpExpires))
         {
             return RedirectToPage("/Auth/Register");
@@ -104,15 +108,25 @@ public class TwoFactorModel(AppDbContext db, IEmailSender emailSender) : BasePag
             return RedirectToPage("/Auth/Login");
         }
 
-        db.Users.Add(new fit.Models.User
+        var createdUser = new fit.Models.User
         {
             Name = name,
             Email = email,
+            Gender = gender,
+            LocationId = locationId.Value,
             PasswordHash = passwordHash,
             RoleId = roleId.Value
-        });
+        };
+
+        db.Users.Add(createdUser);
 
         await db.SaveChangesAsync();
+        await notifications.NotifyRoleAsync(
+            "Admin",
+            "New account registered",
+            $"{createdUser.Name} ({createdUser.Email}) has created a new account.",
+            "/Admin/Users");
+
         ClearPendingRegistration();
         TempData["Message"] = "Account created successfully. Please login.";
         return RedirectToPage("/Auth/Login");
@@ -244,6 +258,8 @@ public class TwoFactorModel(AppDbContext db, IEmailSender emailSender) : BasePag
     {
         HttpContext.Session.Remove(PendingRegNameKey);
         HttpContext.Session.Remove(PendingRegEmailKey);
+        HttpContext.Session.Remove(PendingRegGenderKey);
+        HttpContext.Session.Remove(PendingRegLocationIdKey);
         HttpContext.Session.Remove(PendingRegPasswordHashKey);
         HttpContext.Session.Remove(PendingRegRoleIdKey);
         HttpContext.Session.Remove(PendingRegOtpHashKey);

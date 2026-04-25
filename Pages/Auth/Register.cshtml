@@ -38,6 +38,37 @@
         <input type="email" name="Email" class="input" placeholder="you@example.com" required/>
       </div>
       <div class="form-group">
+        <label>Gender</label>
+        <select name="Gender" class="input" required>
+          <option value="Female">Female</option>
+          <option value="Male">Male</option>
+          <option value="Prefer not to say" selected>Prefer not to say</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Province</label>
+        <select id="provinceSelect" name="Province" class="input" required>
+          <option value="">Select province</option>
+          @foreach (var province in Model.ProvinceOptions)
+          {
+            if (province.Value == Model.Province)
+            {
+              <option value="@province.Value" selected>@province.Text</option>
+            }
+            else
+            {
+              <option value="@province.Value">@province.Text</option>
+            }
+          }
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Sector</label>
+        <select id="sectorSelect" name="LocationId" class="input" required>
+          <option value="">Select sector</option>
+        </select>
+      </div>
+      <div class="form-group">
         <label>Password</label>
         <input type="password" name="Password" class="input" placeholder="Min 6 characters" required minlength="6"/>
       </div>
@@ -58,5 +89,36 @@
   <span>Stronger every day</span>
 </footer>
 <script src="~/js/fittrack.js"></script>
+<script>
+  (function () {
+    const locations = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.LocationOptions));
+    const selectedProvince = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Province));
+    const selectedLocationId = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.LocationId));
+    const provinceSelect = document.getElementById('provinceSelect');
+    const sectorSelect = document.getElementById('sectorSelect');
+
+    function fillSectors(province, selectedId) {
+      sectorSelect.innerHTML = '<option value="">Select sector</option>';
+      if (!province) return;
+
+      locations
+        .filter(x => x.Province === province)
+        .forEach(x => {
+          const option = document.createElement('option');
+          option.value = String(x.Id);
+          option.textContent = x.Sector;
+          if (selectedId && Number(selectedId) === x.Id) {
+            option.selected = true;
+          }
+          sectorSelect.appendChild(option);
+        });
+    }
+
+    fillSectors(selectedProvince, selectedLocationId);
+    provinceSelect.addEventListener('change', function () {
+      fillSectors(this.value, null);
+    });
+  })();
+</script>
 </body>
 </html>

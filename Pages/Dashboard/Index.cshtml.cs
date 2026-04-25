@@ -26,6 +26,7 @@ public class IndexModel(AppDbContext db) : BasePageModel
     public string WeightChartData { get; set; } = "[]";
     public string WeightChartLabels { get; set; } = "[]";
     public string AiInsight { get; set; } = "";
+    public string ProgressExplanation { get; set; } = "";
 
     public async Task<IActionResult> OnGetAsync()
     {
@@ -85,8 +86,29 @@ public class IndexModel(AppDbContext db) : BasePageModel
 
             // AI insight
             AiInsight = GenerateInsight();
+            ProgressExplanation = await GenerateProgressExplanationAsync(uid, today);
         }
         return Page();
+    }
+
+    private async Task<string> GenerateProgressExplanationAsync(int uid, DateTime today)
+    {
+        var weekStart = today.AddDays(-6);
+        var workoutsLast7 = await db.WorkoutLogs
+            .Where(w => w.UserId == uid && w.Date.Date >= weekStart && w.Date.Date <= today)
+            .ToListAsync();
+
+        var goalsCompleted = Goals.Count(g => g.IsCompleted);
+        var activeGoals = Goals.Count(g => !g.IsCompleted);
+        var weekMinutes = workoutsLast7.Sum(w => w.DurationMinutes);
+        var weekCalories = workoutsLast7.Sum(w => w.CaloriesBurned);
+        var moodPart = LatestMood == null
+            ? "No mood update yet"
+            : $"Mood {LatestMood.MoodScore}/5, Energy {LatestMood.EnergyScore}/5";
+
+        return $"In the last 7 days you logged {workoutsLast7.Count} workout(s), {weekMinutes} minutes, and about {weekCalories} kcal burned. " +
+               $"You currently have {activeGoals} active goal(s) and {goalsCompleted} completed goal(s). " +
+               $"Current streak is {Streak} day(s). {moodPart}.";
     }
 
     private string GenerateInsight()

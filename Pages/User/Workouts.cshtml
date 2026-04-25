@@ -12,6 +12,59 @@
 
 @if (TempData["Message"] != null) { <div class="alert alert-success">@TempData["Message"]</div> }
 
+<div class="card" style="margin-bottom:12px;">
+  <h3 style="margin-top:0;">📅 Trainer Daily Plan</h3>
+  <form method="post" asp-page-handler="ExplainPlan" style="margin-bottom:10px; display:inline-block;">
+    <input type="hidden" name="dateFrom" value="@Model.DateFrom" />
+    <input type="hidden" name="dateTo" value="@Model.DateTo" />
+    <button class="btn btn-outline">Explain My Plan</button>
+  </form>
+  @if (!string.IsNullOrWhiteSpace(Model.PlanExplanation))
+  {
+    <div class="alert alert-success" style="margin-top:8px;">@Model.PlanExplanation</div>
+  }
+
+  @if (Model.PlannedLogs.Any())
+  {
+    <table class="data-table">
+      <thead><tr><th>Date</th><th>Plan</th><th>Duration</th><th>Goal</th><th>Goal Type</th><th>Timeline</th><th>Video</th><th>Action</th></tr></thead>
+      <tbody>
+      @foreach (var p in Model.PlannedLogs)
+      {
+        <tr>
+          <td>@p.Date.ToString("ddd, MMM d")</td>
+          <td>@p.WorkoutPlan.Name</td>
+          <td>@p.DurationMinutes min</td>
+          <td>@fit.Pages.User.WorkoutsModel.GetPlanSummary(p.Notes)</td>
+          <td>@fit.Pages.User.WorkoutsModel.GetPlanGoalType(p.Notes)</td>
+          <td>@fit.Pages.User.WorkoutsModel.GetPlanDurationWeeks(p.Notes)</td>
+          <td>
+            @if (Model.PlannedVideoLinks.TryGetValue(p.Id, out var videoUrl))
+            {
+              <a href="@videoUrl" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline">Watch</a>
+            }
+            else
+            {
+              <span class="text-muted">-</span>
+            }
+          </td>
+          <td>
+            <form method="post" asp-page-handler="CompletePlan" style="display:inline">
+              <input type="hidden" name="id" value="@p.Id" />
+              <button class="btn btn-sm btn-primary">Mark Done</button>
+            </form>
+          </td>
+        </tr>
+      }
+      </tbody>
+    </table>
+  }
+  else
+  {
+    <div class="empty-state"><span class="empty-state-emoji">📅</span>No upcoming trainer plan yet.</div>
+  }
+</div>
+
 <div class="stats-grid">
   <div class="stat-card blue"><div class="stat-icon">🏋️</div><div class="stat-info"><span class="stat-value">@Model.Logs.Count</span><span class="stat-label">Sessions</span></div></div>
   <div class="stat-card green"><div class="stat-icon">⏱️</div><div class="stat-info"><span class="stat-value">@Model.TotalMinutes min</span><span class="stat-label">Total Time</span></div></div>

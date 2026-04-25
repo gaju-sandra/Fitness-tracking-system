@@ -20,6 +20,7 @@ Thumbs.db
 
 # Local development settings
 appsettings.Development.json
+appsettings.json
 
 # Local SQLite database files
 *.db

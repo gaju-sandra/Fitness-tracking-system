@@ -1,5 +1,8 @@
+@using fit.Data
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext Db
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -10,11 +13,19 @@
 <link rel="stylesheet" href="~/css/fittrack.css" asp-append-version="true"/>
 @await RenderSectionAsync("Styles", required: false)
 </head>
-<body class="app-shell">
+<body class="app-shell @((ViewData["BodyClass"] as string) ?? string.Empty)">
 @{
+    var userId = Context.Session.GetInt32("UserId");
     var role = Context.Session.GetString("UserRole");
     var userName = Context.Session.GetString("UserName");
-    var isLoggedIn = Context.Session.GetInt32("UserId").HasValue;
+    var isLoggedIn = userId.HasValue;
+    var unreadNotifications = 0;
+    if (isLoggedIn)
+    {
+        unreadNotifications = await Db.Notifications.CountAsync(n => !n.IsRead &&
+            ((n.RecipientUserId.HasValue && n.RecipientUserId == userId) ||
+             (!n.RecipientUserId.HasValue && n.RecipientRole == role)));
+    }
 }
 <nav class="navbar">
   <div class="nav-inner">
@@ -47,6 +58,12 @@
         <a href="/User/Goals">Goals</a>
         <a href="/User/Mood">Mood</a>
       }
+      <a href="/Notifications" class="nav-notify" title="Notifications">🔔
+        @if (unreadNotifications > 0)
+        {
+          <span class="notify-badge">@unreadNotifications</span>
+        }
+      </a>
       <div class="nav-user">
         <span class="badge-role">@role</span>
         <span>@userName</span>
@@ -75,6 +92,22 @@
 @await Html.PartialAsync("_Footer")
 
 <script src="~/js/fittrack.js" asp-append-version="true"></script>
+@if (TempData["Message"] is string successMsg && !string.IsNullOrWhiteSpace(successMsg))
+{
+  <script>
+    window.addEventListener('DOMContentLoaded', function () {
+      window.ft?.toast(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(successMsg)), 'success');
+    });
+  </script>
+}
+@if (TempData["Error"] is string errorMsg && !string.IsNullOrWhiteSpace(errorMsg))
+{
+  <script>
+    window.addEventListener('DOMContentLoaded', function () {
+      window.ft?.toast(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(errorMsg)), 'error');
+    });
+  </script>
+}
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

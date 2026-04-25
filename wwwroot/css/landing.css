@@ -21,7 +21,7 @@
 }
 
 /* Reset default spacing on landing page */
-body {
+.landing-page {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
@@ -32,28 +32,41 @@ html {
     padding: 0;
 }
 
-.app-shell,
-.main-content {
+.landing-page.app-shell,
+.landing-page .main-content {
     width: 100%;
     max-width: 100%;
     overflow-x: hidden;
 }
 
 /* Landing page main content - no spacing */
-.main-content {
+.landing-page .main-content {
+    flex: 1 0 auto;
     padding: 0 !important;
     margin: 0 !important;
-    min-height: 100vh;
+    min-height: auto;
 }
 
-.navbar {
+.landing-page .navbar {
     margin-bottom: 0 !important;
 }
 
 /* Container override for landing */
-.container {
+.landing-page .container {
     margin: 0 !important;
     padding: 0 !important;
+}
+
+.landing-page .site-footer {
+    display: block !important;
+    width: 100%;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative;
+    z-index: 2;
+    margin-top: 28px !important;
+    background: linear-gradient(135deg, #071426 0%, #0b1d34 100%) !important;
+    color: #d8e3f0 !important;
 }
 
 /* Modern Hero Section - No spacing */

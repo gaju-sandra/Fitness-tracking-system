@@ -16,7 +16,7 @@ public class MoodModel(AppDbContext db) : BasePageModel
 
     public async Task<IActionResult> OnGetAsync()
     {
-        var r = RequireLogin(); if (r is RedirectToPageResult) return r;
+        var r = RequireRole("User"); if (r is RedirectToPageResult) return r;
         var uid = SessionUserId!.Value;
         Logs = await db.MoodLogs.Where(m => m.UserId == uid).OrderByDescending(m => m.Date).Take(14).ToListAsync();
         var chart = Logs.OrderBy(m => m.Date).ToList();
@@ -38,7 +38,7 @@ public class MoodModel(AppDbContext db) : BasePageModel
 
     public async Task<IActionResult> OnPostSaveAsync()
     {
-        var r = RequireLogin(); if (r is RedirectToPageResult) return r;
+        var r = RequireRole("User"); if (r is RedirectToPageResult) return r;
         Entry.UserId = SessionUserId!.Value;
         if (Entry.Id == 0) db.MoodLogs.Add(Entry);
         else
@@ -55,7 +55,7 @@ public class MoodModel(AppDbContext db) : BasePageModel
 
     public async Task<IActionResult> OnPostDeleteAsync(int id)
     {
-        var r = RequireLogin(); if (r is RedirectToPageResult) return r;
+        var r = RequireRole("User"); if (r is RedirectToPageResult) return r;
         var entry = await db.MoodLogs.FindAsync(id);
         if (entry != null && entry.UserId == SessionUserId!.Value)
         { db.MoodLogs.Remove(entry); await db.SaveChangesAsync(); }

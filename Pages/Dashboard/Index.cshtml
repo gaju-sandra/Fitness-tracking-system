@@ -156,6 +156,11 @@ else
   <div class="ai-insight"><span class="ai-icon">🤖</span><p>@Model.AiInsight</p></div>
 }
 
+@if (!string.IsNullOrEmpty(Model.ProgressExplanation))
+{
+  <div class="ai-insight"><span class="ai-icon">📈</span><p>@Model.ProgressExplanation</p></div>
+}
+
 <div class="stats-grid">
   <div class="stat-card blue">
     <div class="stat-icon">⚖️</div>

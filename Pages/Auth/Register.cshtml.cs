@@ -13,6 +13,8 @@ public class RegisterModel(AppDbContext db, IEmailSender emailSender) : BasePage
     private const string PendingRegNameKey = "PendingReg:Name";
     private const string PendingRegEmailKey = "PendingReg:Email";
     private const string PendingRegPasswordHashKey = "PendingReg:PasswordHash";
+    private const string PendingRegGenderKey = "PendingReg:Gender";
+    private const string PendingRegLocationIdKey = "PendingReg:LocationId";
     private const string PendingRegRoleIdKey = "PendingReg:RoleId";
     private const string PendingRegOtpHashKey = "PendingReg:OtpHash";
     private const string PendingRegOtpSaltKey = "PendingReg:OtpSalt";
@@ -22,6 +24,8 @@ public class RegisterModel(AppDbContext db, IEmailSender emailSender) : BasePage
     [BindProperty] public string Email { get; set; } = "";
     [BindProperty] public string Password { get; set; } = "";
     [BindProperty] public string ConfirmPassword { get; set; } = "";
+    [BindProperty] public string Gender { get; set; } = "Prefer not to say";
+    [BindProperty] public string Province { get; set; } = "";
     [BindProperty] public int RoleId { get; set; } = 3;
     [BindProperty] public int? LocationId { get; set; }
 
@@ -29,7 +33,8 @@ public class RegisterModel(AppDbContext db, IEmailSender emailSender) : BasePage
     public string? Success { get; set; }
     
     public List<SelectListItem> RoleOptions { get; set; } = [];
-    public List<SelectListItem> LocationOptions { get; set; } = [];
+    public List<SelectListItem> ProvinceOptions { get; set; } = [];
+    public List<LocationOption> LocationOptions { get; set; } = [];
 
     public async Task<IActionResult> OnGetAsync()
     {
@@ -53,6 +58,40 @@ public class RegisterModel(AppDbContext db, IEmailSender emailSender) : BasePage
             return Page();
         }
 
+        if (string.IsNullOrWhiteSpace(Province))
+        {
+            Error = "Please choose a province.";
+            await LoadOptionsAsync();
+            return Page();
+        }
+
+        if (!LocationId.HasValue)
+        {
+            Error = "Please choose a sector.";
+            await LoadOptionsAsync();
+            return Page();
+        }
+
+        var selectedLocation = await db.Locations
+            .Where(l => l.Id == LocationId.Value && l.Province == Province)
+            .Select(l => new { l.Id })
+            .FirstOrDefaultAsync();
+
+        if (selectedLocation == null)
+        {
+            Error = "Please choose a valid province and sector.";
+            await LoadOptionsAsync();
+            return Page();
+        }
+
+        var normalizedGender = NormalizeGender(Gender);
+        if (normalizedGender == null)
+        {
+            Error = "Please choose a valid gender option.";
+            await LoadOptionsAsync();
+            return Page();
+        }
+
         var selectedRoleId = await ResolveRoleIdFromNameConventionAsync(Name);
         if (selectedRoleId == 0)
         {
@@ -67,7 +106,9 @@ public class RegisterModel(AppDbContext db, IEmailSender emailSender) : BasePage
 
         HttpContext.Session.SetString(PendingRegNameKey, Name.Trim());
         HttpContext.Session.SetString(PendingRegEmailKey, Email.Trim().ToLowerInvariant());
+        HttpContext.Session.SetString(PendingRegGenderKey, normalizedGender);
         HttpContext.Session.SetString(PendingRegPasswordHashKey, BCrypt.Net.BCrypt.HashPassword(Password));
+        HttpContext.Session.SetInt32(PendingRegLocationIdKey, selectedLocation.Id);
         HttpContext.Session.SetInt32(PendingRegRoleIdKey, selectedRoleId);
         HttpContext.Session.SetString(PendingRegOtpHashKey, hash);
         HttpContext.Session.SetString(PendingRegOtpSaltKey, salt);
@@ -98,8 +139,23 @@ public class RegisterModel(AppDbContext db, IEmailSender emailSender) : BasePage
         RoleOptions = await db.Roles
             .Select(r => new SelectListItem { Value = r.Id.ToString(), Text = r.Name })
             .ToListAsync();
-            
-        LocationOptions = new List<SelectListItem>();
+
+        LocationOptions = await db.Locations
+            .OrderBy(l => l.Province)
+            .ThenBy(l => l.Sector)
+            .Select(l => new LocationOption
+            {
+                Id = l.Id,
+                Province = l.Province,
+                Sector = l.Sector
+            })
+            .ToListAsync();
+
+        ProvinceOptions = LocationOptions
+            .Select(l => l.Province)
+            .Distinct()
+            .Select(p => new SelectListItem { Value = p, Text = p })
+            .ToList();
     }
 
     private async Task<int> ResolveRoleIdFromNameConventionAsync(string? name)
@@ -115,5 +171,23 @@ public class RegisterModel(AppDbContext db, IEmailSender emailSender) : BasePage
             .Where(r => r.Name == roleName)
             .Select(r => r.Id)
             .FirstOrDefaultAsync();
+    }
+
+    private static string? NormalizeGender(string? value)
+    {
+        return (value ?? string.Empty).Trim() switch
+        {
+            "Male" => "Male",
+            "Female" => "Female",
+            "Prefer not to say" => "Prefer not to say",
+            _ => null
+        };
+    }
+
+    public class LocationOption
+    {
+        public int Id { get; set; }
+        public string Province { get; set; } = "";
+        public string Sector { get; set; } = "";
     }
 }

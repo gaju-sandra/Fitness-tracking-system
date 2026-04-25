@@ -7,6 +7,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 {
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<Location> Locations => Set<Location>();
     public DbSet<BodyWeight> BodyWeights => Set<BodyWeight>();
     public DbSet<Goal> Goals => Set<Goal>();
     public DbSet<Food> Foods => Set<Food>();
@@ -15,9 +16,23 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<WorkoutLog> WorkoutLogs => Set<WorkoutLog>();
     public DbSet<MoodLog> MoodLogs => Set<MoodLog>();
     public DbSet<Badge> Badges => Set<Badge>();
+    public DbSet<Notification> Notifications => Set<Notification>();
 
     protected override void OnModelCreating(ModelBuilder b)
     {
+        b.Entity<Location>()
+            .HasIndex(l => new { l.Province, l.Sector })
+            .IsUnique();
+
+        b.Entity<Notification>()
+            .HasIndex(n => new { n.RecipientUserId, n.IsRead, n.CreatedAt });
+
+        b.Entity<Notification>()
+            .HasOne(n => n.RecipientUser)
+            .WithMany(u => u.Notifications)
+            .HasForeignKey(n => n.RecipientUserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         b.Entity<Role>().HasData(
             new Role { Id = 1, Name = "Admin" },
             new Role { Id = 2, Name = "Trainer" },
@@ -25,10 +40,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         );
 
         b.Entity<User>().HasData(
-            new User { Id = 1, Name = "Admin User", Email = "admin@fittrack.rw", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"), RoleId = 1, CreatedAt = new DateTime(2025, 1, 1) },
-            new User { Id = 2, Name = "Jean Trainer", Email = "trainer@fittrack.rw", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Trainer@123"), RoleId = 2, CreatedAt = new DateTime(2025, 1, 1) },
-            new User { Id = 3, Name = "Alice Uwase", Email = "alice@fittrack.rw", PasswordHash = BCrypt.Net.BCrypt.HashPassword("User@123"), RoleId = 3, TrainerId = 2, CreatedAt = new DateTime(2025, 1, 1) },
-            new User { Id = 4, Name = "Bob Mugisha", Email = "bob@fittrack.rw", PasswordHash = BCrypt.Net.BCrypt.HashPassword("User@123"), RoleId = 3, TrainerId = 2, CreatedAt = new DateTime(2025, 1, 1) }
+            new User { Id = 1, Name = "Admin User", Email = "admin@fittrack.rw", Gender = "Male", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"), RoleId = 1, CreatedAt = new DateTime(2025, 1, 1) },
+            new User { Id = 2, Name = "Jean Trainer", Email = "trainer@fittrack.rw", Gender = "Male", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Trainer@123"), RoleId = 2, CreatedAt = new DateTime(2025, 1, 1) },
+            new User { Id = 3, Name = "Alice Uwase", Email = "alice@fittrack.rw", Gender = "Female", PasswordHash = BCrypt.Net.BCrypt.HashPassword("User@123"), RoleId = 3, TrainerId = 2, CreatedAt = new DateTime(2025, 1, 1) },
+            new User { Id = 4, Name = "Bob Mugisha", Email = "bob@fittrack.rw", Gender = "Male", PasswordHash = BCrypt.Net.BCrypt.HashPassword("User@123"), RoleId = 3, TrainerId = 2, CreatedAt = new DateTime(2025, 1, 1) }
         );
 
         b.Entity<Food>().HasData(
@@ -58,9 +73,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         );
 
         b.Entity<Goal>().HasData(
-            new Goal { Id = 1, UserId = 3, Title = "Lose 5kg", Type = "Weight", TargetValue = 67.5f, CurrentValue = 70.5f, Deadline = new DateTime(2025, 8, 1), IsCompleted = false },
-            new Goal { Id = 2, UserId = 3, Title = "Run 5km daily", Type = "Workout", TargetValue = 5, CurrentValue = 3, Deadline = new DateTime(2025, 7, 1), IsCompleted = false },
-            new Goal { Id = 3, UserId = 4, Title = "Build muscle mass", Type = "Weight", TargetValue = 90, CurrentValue = 84.2f, Deadline = new DateTime(2025, 9, 1), IsCompleted = false }
+            new Goal { Id = 1, UserId = 3, Title = "Lose 5kg", Type = "Weight", TargetValue = 67.5f, CurrentValue = 70.5f, Deadline = new DateTime(2025, 8, 1), IsCompleted = false, PreferredTrainerGender = "Any" },
+            new Goal { Id = 2, UserId = 3, Title = "Run 5km daily", Type = "Workout", TargetValue = 5, CurrentValue = 3, Deadline = new DateTime(2025, 7, 1), IsCompleted = false, PreferredTrainerGender = "Any" },
+            new Goal { Id = 3, UserId = 4, Title = "Build muscle mass", Type = "Weight", TargetValue = 90, CurrentValue = 84.2f, Deadline = new DateTime(2025, 9, 1), IsCompleted = false, PreferredTrainerGender = "Any" }
         );
 
         b.Entity<WorkoutLog>().HasData(

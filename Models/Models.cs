@@ -12,9 +12,12 @@ public class User
     public int Id { get; set; }
     public string Name { get; set; } = "";
     public string Email { get; set; } = "";
+    public string Gender { get; set; } = "Prefer not to say";
     public string PasswordHash { get; set; } = "";
     public int RoleId { get; set; }
     public Role Role { get; set; } = null!;
+    public int? LocationId { get; set; }
+    public Location? Location { get; set; }
     public int? TrainerId { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public ICollection<BodyWeight> BodyWeights { get; set; } = [];
@@ -23,6 +26,28 @@ public class User
     public ICollection<NutritionLog> NutritionLogs { get; set; } = [];
     public ICollection<MoodLog> MoodLogs { get; set; } = [];
     public ICollection<Badge> Badges { get; set; } = [];
+    public ICollection<Notification> Notifications { get; set; } = [];
+}
+
+public class Notification
+{
+    public int Id { get; set; }
+    public int? RecipientUserId { get; set; }
+    public User? RecipientUser { get; set; }
+    public string? RecipientRole { get; set; }
+    public string Title { get; set; } = "";
+    public string Message { get; set; } = "";
+    public string? Link { get; set; }
+    public bool IsRead { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+}
+
+public class Location
+{
+    public int Id { get; set; }
+    public string Province { get; set; } = "";
+    public string Sector { get; set; } = "";
+    public ICollection<User> Users { get; set; } = [];
 }
 
 public class BodyWeight
@@ -46,6 +71,7 @@ public class Goal
     public float CurrentValue { get; set; }
     public DateTime Deadline { get; set; }
     public bool IsCompleted { get; set; }
+    public string PreferredTrainerGender { get; set; } = "Any";
 }
 
 public class Food

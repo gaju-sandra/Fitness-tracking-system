@@ -188,6 +188,8 @@ html,body{
 .btn-logout{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:6px 10px;border-radius:8px;color:var(--text)}
 .theme-toggle{cursor:pointer;padding:8px;border-radius:8px;background:var(--glass)}
 .badge-role{padding:6px 8px;border-radius:999px;font-weight:700;font-size:0.8rem;background:rgba(255,255,255,0.03);color:var(--muted)}
+.nav-notify{position:relative;display:inline-flex;align-items:center;justify-content:center;min-width:38px}
+.notify-badge{position:absolute;top:-3px;right:-2px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--danger);color:#fff;font-size:.7rem;display:inline-flex;align-items:center;justify-content:center;font-weight:700}
 
 @media (max-width:720px){
   .nav-inner{position:relative}
@@ -415,7 +417,7 @@ html,body{
 .app-shell{min-height:100vh;display:flex;flex-direction:column}
 .app-shell .main-content{flex:1}
 .site-footer{
-  margin-top:28px;
+  margin-top:auto;
   background:linear-gradient(135deg,#071426 0%, #0b1d34 100%);
   color:#d8e3f0;
   border-top:1px solid rgba(255,255,255,0.08);
@@ -433,7 +435,7 @@ html,body{
 .footer-news{margin:0 0 10px;color:#c2d2e6;font-size:.86rem;line-height:1.4}
 .footer-cta{display:inline-block;text-decoration:none;background:#ff4b4b;color:#fff;padding:9px 12px;border-radius:8px;font-weight:800;font-size:.85rem}
 .footer-bottom{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,0.08);padding-top:12px;color:#9ab0c8;font-size:.8rem}
-.footer-bottom-links{display:flex;gap=14px;flex-wrap:wrap}
+.footer-bottom-links{display:flex;gap:14px;flex-wrap:wrap}
 .footer-bottom-links a{text-decoration:none;color:#9ab0c8}
 .footer-bottom-links a:hover{color:#fff}
 

@@ -16,7 +16,7 @@ public class BodyWeightModel(AppDbContext db) : BasePageModel
 
     public async Task<IActionResult> OnGetAsync(string? dateFrom, string? dateTo)
     {
-        var r = RequireLogin(); if (r is RedirectToPageResult) return r;
+        var r = RequireRole("User"); if (r is RedirectToPageResult) return r;
         var uid = SessionUserId!.Value;
         DateFrom = dateFrom; DateTo = dateTo;
 
@@ -33,7 +33,7 @@ public class BodyWeightModel(AppDbContext db) : BasePageModel
 
     public async Task<IActionResult> OnPostSaveAsync()
     {
-        var r = RequireLogin(); if (r is RedirectToPageResult) return r;
+        var r = RequireRole("User"); if (r is RedirectToPageResult) return r;
         Entry.UserId = SessionUserId!.Value;
         if (Entry.Id == 0) db.BodyWeights.Add(Entry);
         else
@@ -49,7 +49,7 @@ public class BodyWeightModel(AppDbContext db) : BasePageModel
 
     public async Task<IActionResult> OnPostDeleteAsync(int id)
     {
-        var r = RequireLogin(); if (r is RedirectToPageResult) return r;
+        var r = RequireRole("User"); if (r is RedirectToPageResult) return r;
         var entry = await db.BodyWeights.FindAsync(id);
         if (entry != null && entry.UserId == SessionUserId!.Value)
         { db.BodyWeights.Remove(entry); await db.SaveChangesAsync(); }

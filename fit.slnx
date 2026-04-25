@@ -1,3 +1,9 @@
+<<<<<<< HEAD
 <Solution>
   <Project Path="fit.csproj" />
 </Solution>
+=======
+<Solution>
+  <Project Path="fit.csproj" />
+</Solution>
+>>>>>>> 940a79274a461500d779e3b365dc15372159c2a7

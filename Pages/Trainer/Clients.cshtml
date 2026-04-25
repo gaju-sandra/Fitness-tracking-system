@@ -6,6 +6,48 @@
   <h1>👥 My Clients</h1>
 </div>
 
+@if (TempData["Message"] != null)
+{
+  <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+<div class="card" style="margin-bottom:12px;">
+  <h3 style="margin-top:0;">Assign Existing User By Email</h3>
+  <p class="text-muted" style="margin-top:0;">Start with <strong>sandragaju6@gmail.com</strong> to test flow. Once assigned, their goals appear below for plan generation.</p>
+  <form method="post" asp-page-handler="AssignClient" class="filter-form">
+    <input type="email" name="ClientEmail" class="form-control" placeholder="user@email.com" required />
+    <button type="submit" class="btn btn-outline">Assign To Me</button>
+  </form>
+</div>
+
+<div class="card" style="margin-bottom:12px;">
+  <h3 style="margin-top:0;">Create Daily Plan From Goal Duration</h3>
+  <p class="text-muted" style="margin-top:0;">Automatically prepares a plan based on the user's selected goal type (Weight Loss, Nutrition, Workout) and timeline.</p>
+  <form method="post" asp-page-handler="CreatePlan" class="filter-form">
+    <select name="PlanClientId" id="planClientId" class="form-control" required>
+      <option value="">Select client</option>
+      @foreach (var c in Model.Clients)
+      {
+        <option value="@c.Id">@c.Name</option>
+      }
+    </select>
+    <select name="PlanGoalId" id="planGoalId" class="form-control" required>
+      <option value="">Select goal ID</option>
+      @foreach (var c in Model.Clients)
+      {
+        foreach (var g in Model.ActiveGoals.GetValueOrDefault(c.Id) ?? [])
+        {
+          var goalType = g.Type == "Weight" ? "Weight Loss" : g.Type;
+          var daysLeft = Math.Max(1, (g.Deadline.Date - DateTime.UtcNow.Date).Days + 1);
+          var weeks = Math.Max(1, (int)Math.Ceiling(daysLeft / 7.0));
+          <option value="@g.Id" data-client-id="@c.Id">@c.Name: @g.Title (@goalType, @weeks weeks)</option>
+        }
+      }
+    </select>
+    <button type="submit" class="btn btn-primary">Give Plan</button>
+  </form>
+</div>
+
 <div class="clients-grid">
   @foreach (var c in Model.Clients)
   {
@@ -19,6 +61,22 @@
         <div class="cs"><span>⚖️</span><strong>@(weight != null ? weight.Weight + " kg" : "N/A")</strong><small>Latest Weight</small></div>
         <div class="cs"><span>🏋️</span><strong>@workouts</strong><small>Workouts</small></div>
       </div>
+      <div class="text-muted" style="font-size:.85rem; text-align:left; margin:8px 0;">
+        <strong>Active goals:</strong>
+        <ul style="margin:6px 0 0 18px; padding:0;">
+          @foreach (var g in Model.ActiveGoals.GetValueOrDefault(c.Id) ?? [])
+          {
+            var goalType = g.Type == "Weight" ? "Weight Loss" : g.Type;
+            var daysLeft = Math.Max(1, (g.Deadline.Date - DateTime.UtcNow.Date).Days + 1);
+            var weeks = Math.Max(1, (int)Math.Ceiling(daysLeft / 7.0));
+            <li>@g.Title <small>(@goalType · @weeks weeks · to @g.Deadline.ToString("MMM d, yyyy")) · trainer: @g.PreferredTrainerGender</small></li>
+          }
+          @if (!(Model.ActiveGoals.GetValueOrDefault(c.Id)?.Any() ?? false))
+          {
+            <li>No active goals</li>
+          }
+        </ul>
+      </div>
       <p class="text-muted"><small>Joined @c.CreatedAt.ToString("MMM d, yyyy")</small></p>
     </div>
   }
@@ -27,3 +85,30 @@
     <div class="empty-state"><p>No clients assigned yet. Ask an admin to assign users to you.</p></div>
   }
 </div>
+
+@section Scripts {
+<script>
+  const clientSelect = document.getElementById('planClientId');
+  const goalSelect = document.getElementById('planGoalId');
+  if (clientSelect && goalSelect) {
+    const options = Array.from(goalSelect.querySelectorAll('option'));
+    const placeholder = options[0];
+
+    function filterGoalsByClient() {
+      const selected = clientSelect.value;
+      goalSelect.innerHTML = '';
+      goalSelect.appendChild(placeholder.cloneNode(true));
+
+      options.slice(1).forEach(opt => {
+        if (!selected || opt.dataset.clientId === selected) {
+          goalSelect.appendChild(opt.cloneNode(true));
+        }
+      });
+      goalSelect.value = '';
+    }
+
+    clientSelect.addEventListener('change', filterGoalsByClient);
+    filterGoalsByClient();
+  }
+</script>
+}

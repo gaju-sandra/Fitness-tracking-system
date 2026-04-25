@@ -18,7 +18,7 @@ public class NutritionModel(AppDbContext db) : BasePageModel
 
     public async Task<IActionResult> OnGetAsync(string? date)
     {
-        var r = RequireLogin(); if (r is RedirectToPageResult) return r;
+        var r = RequireRole("User"); if (r is RedirectToPageResult) return r;
         var uid = SessionUserId!.Value;
         DateFilter = date ?? DateTime.UtcNow.ToString("yyyy-MM-dd");
         Foods = await db.Foods.OrderBy(f => f.Name).ToListAsync();
@@ -40,7 +40,7 @@ public class NutritionModel(AppDbContext db) : BasePageModel
 
     public async Task<IActionResult> OnPostSaveAsync()
     {
-        var r = RequireLogin(); if (r is RedirectToPageResult) return r;
+        var r = RequireRole("User"); if (r is RedirectToPageResult) return r;
         Entry.UserId = SessionUserId!.Value;
         if (Entry.Id == 0) db.NutritionLogs.Add(Entry);
         else
@@ -57,7 +57,7 @@ public class NutritionModel(AppDbContext db) : BasePageModel
 
     public async Task<IActionResult> OnPostDeleteAsync(int id)
     {
-        var r = RequireLogin(); if (r is RedirectToPageResult) return r;
+        var r = RequireRole("User"); if (r is RedirectToPageResult) return r;
         var entry = await db.NutritionLogs.FindAsync(id);
         if (entry != null && entry.UserId == SessionUserId!.Value)
         { db.NutritionLogs.Remove(entry); await db.SaveChangesAsync(); }
